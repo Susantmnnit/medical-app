@@ -96,3 +96,202 @@
   padding: 20px;
   border-radius: 10px;
 }
+.containt-header{
+  font-size: 14px;
+  font-weight: lighter;
+  color: #8a8c8d;
+  padding: 7px;
+}
+.contain-num{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 48px;
+  font-weight: lighter;
+  color: #857e75;
+}
+.compl-num-cont{
+  border-radius: 16px;
+  box-shadow: 3px 3px 5px 0px rgba(171, 168, 168, 0.1), 1px 1px 5px 0px rgba(163, 160, 160, 0.2);
+  background-color: white;
+}
+.doctor_idetails_image{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 12px;
+  flex-direction: column;
+}
+.doctor_button{
+  background-color: #f59f43eb;
+  margin: 9px;
+  color: white;
+}
+.feedbacks_div{
+  height: 55vh;
+  flex: 0.9;
+  padding: 5px;
+}
+.feedback{
+  margin-bottom: 5px;
+}
+li{
+  list-style: none;
+}
+.appointments_list{
+  height: 55vh;
+    flex: 0.9;
+    padding: 5px;
+}
+.appointment{
+  margin-bottom: 5px;
+  padding-right: 8px;
+}
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: white;
+  padding: 20px;
+  border-radius: 5px;
+  max-width: 500px;
+  width: 50vh;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: left;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  margin-bottom: 10px;
+}
+
+input {
+  margin-left: 10px;
+  padding: 5px;
+  font-size: 14px;
+}
+
+.button-group {
+  display: flex;
+  justify-content: space-between;
+}
+
+.primary {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.primary:hover {
+  background-color: #218838;
+}
+
+.secondary {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.secondary:hover {
+  background-color: #c82333;
+}
+
+.message {
+  padding: 10px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  text-align: center;
+}
+
+.message.success {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.message.error {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+.slots-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  /* padding: 10px; */
+  overflow-y: scroll;
+}
+.css-15m9tcu{
+  height: 100vh;
+}
+.slot-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  width: 100%;
+  text-align: left;
+    /* transition: transform 0.2s; */
+}
+
+/* .slot-card:hover {
+  transform: scale(1.05);
+} */
+
+.slot-status{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.slot-head{
+  width: 100%;
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  justify-content: center
+}
+.slot-header-text{
+  font-size: 16px;
+  font-style: revert;
+  color: #5b8686;
+}
+.slot-header-text{
+  font-style: revert;
+  color: #5b8686;
+  font-size: 16px;
+}
+ .added-slots{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+ }
+
+@media (max-width: 600px) {
+  .slot-card {
+    width: 100%;
+  }
+}

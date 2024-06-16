@@ -4,11 +4,21 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import SendIcon from '@mui/icons-material/Send';
 import { Card, CardActions, CardContent} from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 export default function Homeview() {
+    const navigate=useNavigate();
 
+    const user = localStorage.getItem("Data")
+    ? JSON.parse(localStorage.getItem("Data"))
+    : null;
     const handleLoginClick = () => {
-        // navigate("/login");
+        if (user) {
+            navigate("/doctors");
+        }
+        else {
+            navigate("/login");
+        }
         // navigate("/userprofile");
     };
     
@@ -31,7 +41,7 @@ export default function Homeview() {
         <motion.div className='button-to-go' whileHover={{ scale: 1.1 }} transition={{ type: "spring", stiffness: 400, damping: 10 }} whileTap={{ scale: 0.9 }}>
             <CardActions>
             <Button variant="contained" endIcon={<SendIcon />} onClick={handleLoginClick}>
-                Drop complaint
+                Let's see a doctor
             </Button>
             </CardActions>
         </motion.div>
