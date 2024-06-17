@@ -289,6 +289,20 @@ input {
   align-items: center;
   overflow: hidden;
  }
+ .css-mhc70k-MuiGrid-root>.MuiGrid-item {
+  padding-left: 8px;
+  padding-right: 8px;
+}
+.css-i3pbo{
+  width: 100%;
+}
+.patient-div{
+  height: 92vh;
+  overflow-y: hidden;
+}
+.css-1se6h5k{
+  width: 100%;
+}
 
 @media (max-width: 600px) {
   .slot-card {

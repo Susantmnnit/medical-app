@@ -20,7 +20,7 @@ const slotSchema = new mongoose.Schema(
     },
     patientId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Patient",
+      ref: "USER",
       default: null,
     },
   }

@@ -3,12 +3,12 @@ const mongoose = require("mongoose");
 const feedbackSchema = new mongoose.Schema({
   doctor: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Doctor",
+    ref: "DOCTOR",
     required: true,
   },
   patient: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Patient",
+    ref: "USER",
     required: true,
   },
   comment: {

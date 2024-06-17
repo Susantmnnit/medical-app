@@ -1,41 +1,54 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { useParams } from 'react-router-dom';
 import { Box, Button, Icon, Typography, Input, Divider } from '@mui/material';
 import KeyboardDoubleArrowRightOutlinedIcon from '@mui/icons-material/KeyboardDoubleArrowRightOutlined';
 
-export default function Feedbacks() {
-  const [feedbacks, setFeedbacks] = useState([
-    { id: 1, text: 'Good enough to explain all rjidnn juud', author: 'Rohit' },
-      { id: 2, text: 'Another feedback example', author: 'John' },
-      { id: 1, text: 'Good enough to explain all rjidnn juud', author: 'Rohit' },
-      { id: 1, text: 'Good enough to explain all rjidnn juud', author: 'Rohit' },
-      { id: 1, text: 'Good enough to explain all rjidnn juud', author: 'Rohit' },
-      { id: 1, text: 'Good enough to explain all rjidnn juud', author: 'Rohit' },
-      { id: 1, text: 'Good enough to explain all rjidnn juud', author: 'Rohit' },
-      { id: 1, text: 'Good enough to explain all rjidnn juud', author: 'Rohit' },
-    { id: 1, text: 'Good enough to explain all rjidnn juud', author: 'Rohit' }
-  ]);
-
-  const user = localStorage.getItem("Data")
-    ? JSON.parse(localStorage.getItem("Data"))
-    : null;
-  
+export default function Feedbacks({doctorId}) {
+  const [feedbacks, setFeedbacks] = useState([]);
   const [newFeedback, setNewFeedback] = useState('');
+  const user = localStorage.getItem("Data") ? JSON.parse(localStorage.getItem("Data")) : null;
+  const patientId = user && user.userLogin ? user.userLogin._id : null;
+
+  useEffect(() => {
+    // console.log(doctorId);
+    const fetchFeedbacks = async () => {
+      if (!doctorId) {
+        console.error('Doctor ID is missing in the URL.');
+        return;
+      }
+      
+      try {
+        const response = await axios.get(`http://localhost:8000/doctors/${doctorId}/feedbacks`);
+        setFeedbacks(response.data);
+        console.log("feedbacks--",feedbacks);
+      } catch (error) {
+        console.error('Error fetching feedbacks:', error);
+      }
+    };
+
+    fetchFeedbacks();
+  }, [doctorId]);
 
   const handleInputChange = (e) => {
     setNewFeedback(e.target.value);
   };
 
-  const handleAddFeedback = () => {
-    if (newFeedback.trim() === '') {
-      return; // Prevent adding empty feedback
+  const handleAddFeedback = async () => {
+    if (newFeedback.trim() === '' || !patientId) {
+      return; // Prevent adding empty feedback or if patientId is missing
     }
-    const newId = feedbacks.length + 1;
-    const updatedFeedbacks = [
-      ...feedbacks,
-      { id: newId, text: newFeedback, author: 'Anonymous' } // Set author as needed
-    ];
-    setFeedbacks(updatedFeedbacks);
-    setNewFeedback('');
+
+    try {
+      const response = await axios.post(`http://localhost:8000/doctors/${doctorId}/feedback`, {
+        patientId,
+        comment: newFeedback
+      });
+      setFeedbacks([...feedbacks, response.data.feedback]);
+      setNewFeedback('');
+    } catch (error) {
+      console.error('Error adding feedback:', error);
+    }
   };
 
   return (
@@ -44,7 +57,7 @@ export default function Feedbacks() {
         bgcolor: 'white',
         borderRadius: '10px',
         boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-        height: '100%',
+        height: '74vh',
         display: 'flex',
         flexDirection: 'column',
         overflow: 'hidden',
@@ -73,33 +86,33 @@ export default function Feedbacks() {
       >
         <ul className='feedbacks_div'>
           {feedbacks.map((feedback) => (
-            <li className='feedback' key={feedback.id}>
+            <li className='feedback' key={feedback._id}>
               <Typography variant="body1" sx={{ mb: 0, display: 'flex', color: '#8c6b52' }}>
                 <Icon sx={{ color: '#dfc39c', mr: 1 }}>
                   <KeyboardDoubleArrowRightOutlinedIcon />
                 </Icon>
-                {feedback.text}
+                {feedback.comment}
               </Typography>
               <Typography variant="body2" sx={{ color: '#7d8285', display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
-                By {feedback.author}
+                By {feedback.patient ? feedback.patient.name : 'Anonymous'}
               </Typography>
               <Divider sx={{ my: 1 }} />
             </li>
           ))}
         </ul>
       </Box>
-      {user.userLogin &&
+      {user && user.userLogin && (
         <Box sx={{ p: 2, display: 'flex', alignItems: 'center' }}>
-        <Input
-          placeholder='Add a new feedback'
-          value={newFeedback}
-          onChange={handleInputChange}
-          fullWidth
-          sx={{ mr: 2 }}
-        />
-        <Button variant="contained" onClick={handleAddFeedback}>Add</Button>
-      </Box>
-      }
+          <Input
+            placeholder='Add a new feedback'
+            value={newFeedback}
+            onChange={handleInputChange}
+            fullWidth
+            sx={{ mr: 2 }}
+          />
+          <Button variant="contained" onClick={handleAddFeedback}>Add</Button>
+        </Box>
+      )}
     </Box>
   );
 }

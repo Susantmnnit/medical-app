@@ -9,6 +9,8 @@ const Doctor = require("../model/doctorschema");
 const Appointment = require("../model/bookingschema");
 const Authenticate = require("../middleware/authentication");
 const generateToken = require("../middleware/token");
+const { default: mongoose } = require("mongoose");
+const { Feedback } = require("../model/feedbackscema");
 
 router.get("/", (req, res) => {
   res.send("Hello Wolrd in router/auth/home");
@@ -193,7 +195,7 @@ router.get("/getdoctorwithid/:doctorId", async (req, res) => {
     const doctor = await Doctor.findById(doct_id).select(
       "-tokens -password -cpassword"
     );
-    console.log("doctor", doctor);
+    // console.log("doctor", doctor);
     res.json(doctor);
   } catch (err) {
     console.log(err);
@@ -205,37 +207,88 @@ router.post("/addSlot/:doctorId", async (req, res) => {
   const { doctorId } = req.params;
   const { date, startTime, endTime } = req.body;
 
-  try {
-    const doctor = await Doctor.findById(doctorId);
-    if (!doctor) {
-      return res.status(404).send("Doctor not found");
-    }
-
-    doctor.slots.push({ date, startTime, endTime });
-    await doctor.save();
-    res.status(201).send(doctor);
-  } catch (error) {
-    res.status(400).send(error);
+  if (!date || !startTime || !endTime) {
+    return res.status(400).json({ error: "All fields are required" });
   }
-});
 
-router.post("/doctors/:doctorId/slots/:slotId/book", async (req, res) => {
-  console.log(",,,,,,,", req.body);
   try {
-    const { doctorId, slotId } = req.params;
-    const { patientId } = req.body;
-
     const doctor = await Doctor.findById(doctorId);
     if (!doctor) {
       return res.status(404).json({ error: "Doctor not found" });
     }
 
+    const newSlot = { date, startTime, endTime };
+    doctor.slots.push(newSlot);
+    await doctor.save();
+
+    res.status(201).json({ message: "Slot added successfully", slot: newSlot });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+router.delete("/deleteSlot/:doctorId/:slotId", async (req, res) => {
+  const { doctorId, slotId } = req.params;
+
+  try {
+    const doctor = await Doctor.findById(doctorId);
+    if (!doctor) {
+      return res.status(404).json({ error: "Doctor not found" });
+    }
+
+    const slotIndex = doctor.slots.findIndex((slot) => slot._id.equals(slotId));
+    if (slotIndex === -1) {
+      return res.status(404).json({ error: "Slot not found" });
+    }
+
+    doctor.slots.splice(slotIndex, 1);
+    await doctor.save();
+
+    res.status(200).json({ message: "Slot deleted successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+// Book Slot
+router.post("/doctors/:doctorId/slots/:slotId/book", async (req, res) => {
+  const { doctorId, slotId } = req.params;
+  const { patientId } = req.body;
+
+  if (!patientId) {
+    return res.status(400).json({ error: "Patient ID is required" });
+  }
+
+  try {
+    const doctor = await Doctor.findById(doctorId);
+    if (!doctor) {
+      console.error(`Doctor not found: ${doctorId}`);
+      return res.status(404).json({ error: "Doctor not found" });
+    }
+
+    // Check if the patient has already booked a slot with this doctor
+    const alreadyBooked = doctor.slots.some(
+      (slot) => slot.patientId && slot.patientId.equals(patientId)
+    );
+    if (alreadyBooked) {
+      console.error(
+        `Patient ${patientId} has already booked a slot with doctor ${doctorId}`
+      );
+      return res
+        .status(409)
+        .json({ error: "Patient has already booked a slot with this doctor" });
+    }
+
     const slot = doctor.slots.id(slotId);
     if (!slot) {
+      console.error(`Slot not found: ${slotId}`);
       return res.status(404).json({ error: "Slot not found" });
     }
 
     if (slot.isBooked) {
+      console.error(`Slot ${slotId} is already booked`);
       return res.status(400).json({ error: "Slot already booked" });
     }
 
@@ -244,16 +297,142 @@ router.post("/doctors/:doctorId/slots/:slotId/book", async (req, res) => {
 
     await doctor.save();
 
-    res.status(200).json({ message: "Slot booked successfully", slot });
+    const updatedDoctor = await Doctor.findById(doctorId).populate(
+      "slots.patientId"
+    );
+    const bookedSlot = updatedDoctor.slots.id(slotId);
+
+    res
+      .status(200)
+      .json({ message: "Slot booked successfully", slot: bookedSlot });
+  } catch (error) {
+    console.error(`Error booking slot: ${error}`);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+router.get("/patients/:patientId/bookedSlots", async (req, res) => {
+  console.log(req.body);
+  const { patientId } = req.params;
+
+  try {
+    const bookedSlots = await Doctor.aggregate([
+      { $unwind: "$slots" },
+      {
+        $match: {
+          "slots.patientId": new mongoose.Types.ObjectId(patientId),
+          "slots.date": { $gte: new Date() },
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "slots.patientId",
+          foreignField: "_id",
+          as: "patientInfo",
+        },
+      },
+      { $unwind: "$patientInfo" },
+      {
+        $project: {
+          _id: "$slots._id",
+          date: "$slots.date",
+          startTime: "$slots.startTime",
+          endTime: "$slots.endTime",
+          isBooked: "$slots.isBooked",
+          patientInfo: "$patientInfo",
+        },
+      },
+    ]);
+
+    res.json(bookedSlots);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Server error" });
   }
 });
 
-router.get("/about", Authenticate, (req, res) => {
-  console.log("About");
-  res.send(req.rootUser);
+router.get("/doctors/:doctorId/patients", async (req, res) => {
+  const { doctorId } = req.params;
+
+  try {
+    const doctor = await Doctor.findById(doctorId).populate("slots.patientId");
+
+    if (!doctor) {
+      return res.status(404).json({ error: "Doctor not found" });
+    }
+
+    const bookedSlots = doctor.slots
+      .filter((slot) => slot.isBooked)
+      .map((slot) => ({
+        patient: slot.patientId,
+        date: slot.date,
+        startTime: slot.startTime,
+        endTime: slot.endTime,
+      }));
+
+    res.status(200).json(bookedSlots);
+  } catch (error) {
+    console.error(`Error fetching patients: ${error}`);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+router.post("/doctors/:doctorId/feedback", async (req, res) => {
+  const { doctorId } = req.params;
+  const { patientId, comment } = req.body;
+  console.log(req.body, doctorId);
+  if (!patientId || !comment || !doctorId) {
+    return res
+      .status(400)
+      .json({ error: "Patient ID and comment are required" });
+  }
+
+  try {
+    const doctor = await Doctor.findById(doctorId);
+
+    if (!doctor) {
+      return res.status(404).json({ error: "Doctor not found" });
+    }
+
+    const patient = await User.findById(patientId);
+    if (!patient) {
+      return res.status(404).json({ error: "Patient not found" });
+    }
+
+    console.log("hgghh", doctor, patient);
+    const feedback = new Feedback({
+      doctor: doctor._id,
+      patient: patient._id,
+      comment,
+    });
+    await feedback.save();
+
+    res.status(201).json({ message: "Feedback added successfully", feedback });
+  } catch (error) {
+    console.error(`Error adding feedback: ${error}`);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+// Get feedbacks for a specific doctor
+router.get("/doctors/:doctorId/feedbacks", async (req, res) => {
+  const { doctorId } = req.params;
+
+  if (!doctorId) {
+    return res.status(400).json({ error: "Doctor ID is required" });
+  }
+
+  try {
+    const feedbacks = await Feedback.find({ doctor: doctorId }).populate(
+      "patient",
+      "name"
+    );
+    res.status(200).json(feedbacks);
+  } catch (error) {
+    console.error(`Error fetching feedbacks: ${error}`);
+    res.status(500).json({ error: "Server error" });
+  }
 });
 
 router.get("/logout", (req, res) => {

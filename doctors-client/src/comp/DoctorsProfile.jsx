@@ -1,11 +1,12 @@
 import { Box, Container, Typography, Grid, Button } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import image from '../images/brotherimg.png';
-import { Navigate, useParams } from 'react-router-dom';
+import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios'
 import Feedbacks from './Feedbacks';
 import SlotModal from './Slotmodal';
 import Slots from './Slots';
+import BookedSlots from './bookedSlots';
 
 export default function DoctorsProfile() {
   const user = localStorage.getItem("Data")
@@ -16,6 +17,7 @@ export default function DoctorsProfile() {
   const { doctor_id } = useParams();
   const [doctor, setDoctors] = useState("");
   const [slots, setSlots] = useState([]);
+  const navigate = useNavigate();
   console.log("doctor_id", doctor_id);
 
   useEffect(() => {
@@ -38,6 +40,9 @@ export default function DoctorsProfile() {
   const handleOpenModal = () => setShowModal(true);
   const handleCloseModal = () => setShowModal(false);
 
+  const seePatient = () => {
+    navigate(`/patients/${doctor_id}`);
+  }
 
 
   return (
@@ -139,21 +144,39 @@ export default function DoctorsProfile() {
                 <Slots slots={ slots } doctorId={doctor_id} />
               ) : (
                   <div className="added-slots">
-                    <Button
+                    <div className="doctorpatient">
+                      <Button
                 className='doctor_button'
                     sx={{ backgroundColor: '#f59f43eb', margin: '9px', color: 'white' }}
                     onClick={handleOpenModal}
               >
                 Add Slots
-                  </Button>
+                    </Button>
+                    <Button
+                className='doctor_button'
+                    sx={{ backgroundColor: '#f59f43eb', margin: '9px', color: 'white' }}
+                    onClick={seePatient}
+              >
+                See Patients
+                    </Button>
+                    </div>
                     <Slots slots={slots} doctorId={doctor_id} />
                 </div>
               )}
               <SlotModal show={showModal} handleClose={handleCloseModal} doctorId={doctor_id} />
             </Box>
           </Grid>
-          <Grid item xs={12} md={4}>
-            <Feedbacks/>
+          <Grid item xs={12} md={4}
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems:'center'
+            }}
+          >
+            { user.userLogin &&
+              <BookedSlots userId={user.userLogin._id} />
+            }
+            <Feedbacks doctorId={doctor_id} />
           </Grid>
         </Grid>
       </Box>

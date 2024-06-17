@@ -8,6 +8,7 @@ import Userprofile from "./comp/Userprofile";
 import DoctorsProfile from "./comp/DoctorsProfile";
 import "./App.css";
 import Doctorlogin from "./comp/Doctorlogin";
+import Patients from "./comp/Patients";
 
 function App() {
   const user = localStorage.getItem("Data")
@@ -24,6 +25,7 @@ function App() {
           <Route path="/doctorlogin" element={<Doctorlogin />} />
           <Route path="/doctors" element={<Doctors />} />
           <Route path="/userprofile" element={<Userprofile />} />
+          <Route path="/patients/:doctor_id" element={<Patients />} />
           <Route
             path="/doctorsprofile/:doctor_id"
             element={<DoctorsProfile />}

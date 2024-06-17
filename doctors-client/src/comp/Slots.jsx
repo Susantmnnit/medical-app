@@ -10,8 +10,30 @@ export default function Slots({ slots,doctorId }) {
     const bookSlot = async (slotId) => {
         const patientId = user.userLogin._id;
         try {
-        const response = await axios.post(`http://localhost:8000/doctors/${doctorId}/slots/${slotId}/book`, {patientId});
-        console.log('Slot booked successfully:', response.data);
+            const response = await axios.post(`http://localhost:8000/doctors/${doctorId}/slots/${slotId}/book`, { patientId });
+            if (response.status === 409) {
+                console.log(response.error);
+            }
+        
+        } catch (error) {
+            if (error.response) {
+                console.error('Error response:', error.response.data);
+                alert(`Error booking slot: ${error.response.data.error}`);
+            } else if (error.request) {
+                console.error('Error request:', error.request);
+                alert("Error booking slot: No response from server");
+            } else {
+                console.error('Error message:', error.message);
+                alert(`Error booking slot: ${error.message}`);
+            }
+        }
+    };
+
+    const deleteSlot = async (slotId) => {
+        const patientId = user.doctorLogin._id;
+        try {
+        const response = await axios.delete(`http://localhost:8000/deleteSlot/${doctorId}/${slotId}`, {patientId});
+        console.log('Slot deleted successfully:', response.data);
         
         } catch (error) {
         console.error('Error booking slot:', error);
@@ -35,9 +57,12 @@ export default function Slots({ slots,doctorId }) {
                 </div>
             </div>
               <div className="slot_book">
-            {!slot.isBooked && user.userLogin && 
-                <Button className='doctor_button' sx={{ backgroundColor: '#629d62', margin: '9px', color: 'white' }} onClick={() => bookSlot(slot._id)}>Book slot</Button>
-            }
+                {!slot.isBooked && user.userLogin &&
+                    <Button className='doctor_button' sx={{ backgroundColor: '#629d62', margin: '9px', color: 'white' }} onClick={() => bookSlot(slot._id)}>Book slot</Button>
+                  }
+                {user.doctorLogin &&
+                    <Button className='doctor_button' sx={{ backgroundColor: '#629d62', margin: '9px', color: 'white' }} onClick={() => deleteSlot(slot._id)}>Delete slot</Button>
+                  }
             </div>
         </div>
       ))}
