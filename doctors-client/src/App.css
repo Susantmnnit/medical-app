@@ -89,11 +89,18 @@
   outline: none;
   cursor: pointer;
 }
-
+.form-container{
+  width: 100vh;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 8px 16px rgba(0, 0, 0, 0.1);
+  border-radius: 13px;
+}
 .register-form{
+  justify-content: center;
+  align-items: center;
   background-color: white;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 8px 16px rgba(0, 0, 0, 0.1);
-  padding: 20px;
+  padding: 15px;
+  margin: 10px;
   border-radius: 10px;
 }
 .containt-header{
@@ -302,6 +309,9 @@ input {
 }
 .css-1se6h5k{
   width: 100%;
+}
+.appointments_list{
+  height: 80vh;
 }
 
 @media (max-width: 600px) {

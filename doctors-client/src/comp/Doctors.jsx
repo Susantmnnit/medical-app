@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Button, Container, Select, MenuItem, FormControl, InputLabel, Box, Card, CardHeader, CardContent, Typography, Avatar, IconButton, Grid } from '@mui/material';
+import { Button, Container, Select, MenuItem, FormControl, InputLabel, Box, Card, CardHeader, CardContent, Typography, Avatar, IconButton, Grid, CardMedia } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { useNavigate } from 'react-router-dom';  // Make sure to install react-router-dom
+import img from '../images/clinic.jpg'
 
 export default function Doctors() {
   const navigate = useNavigate();
@@ -85,27 +86,42 @@ export default function Doctors() {
         </Box>
       </form>
       <hr style={{ color: '#1a4588', backgroundColor: '#1a4588', height: '2px', border: 'none', width: '61%', margin: '20px 0' }} />
-      <Grid container spacing={2} sx={{width:'60%'}}>
+      <Grid container spacing={3} sx={{ width: '80%' }}>
         {doctors.map(doctor => (
-          <Grid item xs={10} sm={6} md={4} lg={3} key={doctor._id}>
-            <Card sx={{ maxWidth: 400, cursor: 'pointer' }} onClick={() => handleCardClick(doctor._id)}>
+          <Grid item xs={12} sm={6} md={4} lg={3} key={doctor._id}>
+            <Card 
+              sx={{ 
+                cursor: 'pointer', 
+                transition: 'transform 0.2s', 
+                '&:hover': { 
+                  transform: 'scale(1.05)' 
+                },
+                boxShadow: 3,
+                borderRadius: 2
+              }} 
+              onClick={() => handleCardClick(doctor._id)}
+            >
+              <CardMedia
+                component="img"
+                height="140"
+                image={img}
+                alt={doctor.name}
+              />
               <CardHeader
                 avatar={
                   <Avatar sx={{ bgcolor: "primary.main" }} aria-label="recipe">
                     {doctor.name[0]}
                   </Avatar>
                 }
-                action={
-                  <IconButton aria-label="settings">
-                    <MoreVertIcon />
-                  </IconButton>
-                }
                 title={doctor.name}
-                subheader={doctor.specialization + " - " + doctor.date}
+                subheader={<Typography>Clinic: {doctor.clinic_name}</Typography>}
               />
               <CardContent>
                 <Typography variant="body2" color="text.secondary">
-                  {doctor.name} specializes in {doctor.specialization}. Available on {doctor.date}.
+                  Specializes in {doctor.specalist}.
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Location: {doctor.address},{doctor.pin}
                 </Typography>
               </CardContent>
             </Card>

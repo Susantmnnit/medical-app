@@ -63,7 +63,7 @@ export default function Navheader() {
           component="div"
           sx={{ flexGrow: 1, display: { sm: 'block' } }}
         >
-          LOGO
+          MedConsult
         </Typography>
         <Box sx={{ display: { sm: 'block' } }}>
           <motion.div className='button-to-go' whileHover={{ scale: 1.1 }} transition={{ type: "spring", stiffness: 400, damping: 10 }} whileTap={{ scale: 0.9 }}>

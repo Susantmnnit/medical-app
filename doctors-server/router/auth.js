@@ -11,6 +11,7 @@ const Authenticate = require("../middleware/authentication");
 const generateToken = require("../middleware/token");
 const { default: mongoose } = require("mongoose");
 const { Feedback } = require("../model/feedbackscema");
+const { generateZoomMeeting } = require("../service/zoom");
 
 router.get("/", (req, res) => {
   res.send("Hello Wolrd in router/auth/home");
@@ -253,6 +254,64 @@ router.delete("/deleteSlot/:doctorId/:slotId", async (req, res) => {
 });
 
 // Book Slot
+// router.post("/doctors/:doctorId/slots/:slotId/book", async (req, res) => {
+//   const { doctorId, slotId } = req.params;
+//   const { patientId } = req.body;
+
+//   if (!patientId) {
+//     return res.status(400).json({ error: "Patient ID is required" });
+//   }
+
+//   try {
+//     const doctor = await Doctor.findById(doctorId);
+//     if (!doctor) {
+//       console.error(`Doctor not found: ${doctorId}`);
+//       return res.status(404).json({ error: "Doctor not found" });
+//     }
+
+//     // Check if the patient has already booked a slot with this doctor
+//     const alreadyBooked = doctor.slots.some(
+//       (slot) => slot.patientId && slot.patientId.equals(patientId)
+//     );
+//     if (alreadyBooked) {
+//       console.error(
+//         `Patient ${patientId} has already booked a slot with doctor ${doctorId}`
+//       );
+//       return res
+//         .status(409)
+//         .json({ error: "Patient has already booked a slot with this doctor" });
+//     }
+
+//     const slot = doctor.slots.id(slotId);
+//     if (!slot) {
+//       console.error(`Slot not found: ${slotId}`);
+//       return res.status(404).json({ error: "Slot not found" });
+//     }
+
+//     if (slot.isBooked) {
+//       console.error(`Slot ${slotId} is already booked`);
+//       return res.status(400).json({ error: "Slot already booked" });
+//     }
+
+//     slot.isBooked = true;
+//     slot.patientId = patientId;
+
+//     await doctor.save();
+
+//     const updatedDoctor = await Doctor.findById(doctorId).populate(
+//       "slots.patientId"
+//     );
+//     const bookedSlot = updatedDoctor.slots.id(slotId);
+
+//     res
+//       .status(200)
+//       .json({ message: "Slot booked successfully", slot: bookedSlot });
+//   } catch (error) {
+//     console.error(`Error booking slot: ${error}`);
+//     res.status(500).json({ error: "Server error" });
+//   }
+// });
+
 router.post("/doctors/:doctorId/slots/:slotId/book", async (req, res) => {
   const { doctorId, slotId } = req.params;
   const { patientId } = req.body;
@@ -292,11 +351,23 @@ router.post("/doctors/:doctorId/slots/:slotId/book", async (req, res) => {
       return res.status(400).json({ error: "Slot already booked" });
     }
 
+    // Generate or fetch the video conference details (example: Zoom meeting)
+    const { meetingId, meetingLink, startTime } = await generateZoomMeeting(
+      slot.date,
+      slot.startTime
+    );
+
+    console.log(meetingId, meetingLink, startTime);
+    // Update slot with video conference details
     slot.isBooked = true;
     slot.patientId = patientId;
+    slot.videoConferenceId = meetingId;
+    slot.videoConferenceLink = meetingLink;
+    slot.videoConferenceStartTime = startTime;
 
     await doctor.save();
 
+    // Fetch updated slot with populated patient details
     const updatedDoctor = await Doctor.findById(doctorId).populate(
       "slots.patientId"
     );

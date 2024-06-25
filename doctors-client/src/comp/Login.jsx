@@ -88,7 +88,7 @@ export default function Login() {
         <Container maxWidth="sm">
             <Box sx={{ height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                 <div className="form-container">
-                    <h1 style={{ textAlign: "center", color: "#b6b2b2" }}>{isLogin ? 'Login' : 'Register'}</h1>
+                    <h1 style={{ textAlign: "center", color: "#b6b2b2" }}>{isLogin ? 'Patient Login Page' : 'Registeration Page'}</h1>
                     {isLogin ? (
                         <form method='POST' className="register-form">
                             <TextField style={{ padding: "9px" }} type="text" name="email" value={user.email} onChange={handleInputs} label="Email" autoComplete="off" fullWidth />

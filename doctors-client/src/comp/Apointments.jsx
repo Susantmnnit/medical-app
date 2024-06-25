@@ -21,7 +21,7 @@ export default function Appointments() {
         bgcolor: 'white',
         borderRadius: '10px',
         boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-        height: '100%',
+        height: '80vh',
         display: 'flex',
         flexDirection: 'column',
         overflow: 'hidden',
@@ -44,7 +44,7 @@ export default function Appointments() {
       <Box
         sx={{
           flex: 1,
-          overflowY: 'scroll',
+          // overflowY: 'scroll',
           padding: '5px',
         }}
       >
