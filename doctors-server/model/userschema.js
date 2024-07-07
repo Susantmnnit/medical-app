@@ -6,23 +6,40 @@ const userSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      require: true,
+      required: true,
     },
     email: {
       type: String,
-      require: true,
+      required: true,
+      unique: true,
     },
     phone: {
       type: Number,
-      require: true,
+      required: true,
+    },
+    age: {
+      type: Number,
+      required: true,
+    },
+    bloodgroup: {
+      type: String,
+      required: true,
+    },
+    address: {
+      type: String,
+      required: true,
+    },
+    problems: {
+      type: String,
+      required: true,
     },
     password: {
       type: String,
-      require: true,
+      required: true,
     },
     cpassword: {
       type: String,
-      require: true,
+      required: true,
     },
   },
   { timestamps: true }

@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const Slots = require("./slotSchema");
+const slotSchema = require("./slotSchema");
 // const dotenv=require("dotenv");
 
 // dotenv.config({path:'../config.env'});
@@ -48,7 +48,7 @@ const doctorSchema = new mongoose.Schema(
       type: String,
       require: true,
     },
-    slots: [Slots],
+    slots: [slotSchema],
   },
   { timestamps: true }
 );

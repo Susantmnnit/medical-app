@@ -36,7 +36,7 @@ async function generateZoomMeeting(date, startTime) {
     const response = await axios.post(
       "https://api.zoom.us/v2/users/me/meetings",
       {
-        topic: "Scheduled Video Consultation",
+        topic: "Medconsult",
         type: 2,
         start_time: startDateTime,
         duration: 60,
@@ -56,7 +56,7 @@ async function generateZoomMeeting(date, startTime) {
         },
       }
     );
-
+    console.log("response", response);
     const {
       id: meetingId,
       join_url: meetingLink,
