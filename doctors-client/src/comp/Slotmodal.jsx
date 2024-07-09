@@ -18,7 +18,7 @@ const SlotModal = ({ show, handleClose, doctorId }) => {
       });
       setMessage({ type: "success", text: "Slot added successfully!" });
       setTimeout(() => {
-        setMessage({ type: "", text: "" });
+        setMessage({ type: "success", text: "Slot added successfully!"});
         handleClose();
       }, 2000);
     } catch (error) {

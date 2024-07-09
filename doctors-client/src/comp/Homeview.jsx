@@ -1,50 +1,72 @@
 import * as React from 'react';
 import { motion } from "framer-motion";
-import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
+import { Typography, Button, Card, CardActions, CardContent, Container, Box } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
-import { Card, CardActions, CardContent} from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
 export default function Homeview() {
-    const navigate=useNavigate();
+    const navigate = useNavigate();
 
     const user = localStorage.getItem("Data")
-    ? JSON.parse(localStorage.getItem("Data"))
-    : null;
+        ? JSON.parse(localStorage.getItem("Data"))
+        : null;
+    
     const handleLoginClick = () => {
         if (user) {
             navigate("/doctors");
-        }
-        else {
+        } else {
             navigate("/login");
         }
-        // navigate("/userprofile");
     };
-    
-  return (
-    <Card sx={{ minWidth: 500, height:300, display:"flex", justifyContent:"center", alignItems:"center", flexDirection:"column",borderRadius:"57px", boxShadow: "0px 4px 8px rgba(11, 10, 10, 0.52)" }}>
-        <CardContent>
-            <div style={{display: "flex" , justifyContent:"center",alignItems:"center"}}>
-            <Typography sx={{ fontSize: 28 }} color="text.secondary" gutterBottom style={{alignItems:'center'}}>
-                Wellcome user
-            </Typography>
-            </div>
-            <Typography variant="h5" component="div">
-            </Typography>
-            <div style={{display: "flex" , justifyContent:"center",alignItems:"center"}}>
-            <Typography sx={{ fontSize: 28 }} color="text.secondary" gutterBottom style={{alignItems:'center'}}>
-                Let Us Know Your Problems
-            </Typography>
-            </div>
-        </CardContent>
-        <motion.div className='button-to-go' whileHover={{ scale: 1.1 }} transition={{ type: "spring", stiffness: 400, damping: 10 }} whileTap={{ scale: 0.9 }}>
-            <CardActions>
-            <Button variant="contained" endIcon={<SendIcon />} onClick={handleLoginClick}>
-                Let's see a doctor
-            </Button>
-            </CardActions>
-        </motion.div>
-    </Card>
-  )
+
+    return (
+        <Container maxWidth="md" sx={{ height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <motion.div
+                initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8 }}
+            >
+                <Card sx={{ minWidth: 500, height: 350, display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", borderRadius: "20px", boxShadow: 3, p: 2 }}>
+                    <CardContent>
+                        <Box display="flex" justifyContent="center" mb={2}>
+                            <motion.div
+                                initial={{ opacity: 0, scale: 0.5 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                transition={{ duration: 1, delay: 0.5 }}
+                            >
+                                <Typography variant="h4" color="text.primary" gutterBottom>
+                                    Welcome, User
+                                </Typography>
+                            </motion.div>
+                        </Box>
+                        <Box display="flex" justifyContent="center" mb={2}>
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 1, delay: 1 }}
+                            >
+                                <Typography variant="h5" color="text.secondary">
+                                    Let Us Know Your Problems
+                                </Typography>
+                            </motion.div>
+                        </Box>
+                    </CardContent>
+                    <motion.div
+                        whileHover={{ scale: 1.1 }}
+                        transition={{ type: "spring", stiffness: 300, damping: 15 }}
+                        whileTap={{ scale: 0.9 }}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 1, delay: 1.5 }}
+                    >
+                        <CardActions>
+                            <Button variant="contained" color="primary" endIcon={<SendIcon />} onClick={handleLoginClick} sx={{ textTransform: 'none', px: 4, py: 1.5, borderRadius: '50px' }}>
+                                Let's See a Doctor
+                            </Button>
+                        </CardActions>
+                    </motion.div>
+                </Card>
+            </motion.div>
+        </Container>
+    );
 }

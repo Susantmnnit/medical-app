@@ -8,6 +8,10 @@ export default function Login() {
         name: "",
         email: "",
         phone: "",
+        age: "",
+        bloodgroup: "",
+        address: "",
+        problems: "",
         password: "",
         cpassword: ""
     });
@@ -19,8 +23,8 @@ export default function Login() {
 
     const PostData = async (e) => {
         e.preventDefault();
-        const { name, email, phone, password, cpassword } = user;
-        if (!name || !email || !phone || !password || !cpassword) {
+        const { name, email, phone, age, bloodgroup, address, problems, password, cpassword } = user;
+        if (!name || !email || !phone || !age || !bloodgroup || !address || !problems || !password || !cpassword) {
             window.alert("Please fill all the fields correctly");
             return;
         }
@@ -30,7 +34,7 @@ export default function Login() {
                 headers: {
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({ name, email, phone, password, cpassword })
+                body: JSON.stringify({ name, email, phone, age, bloodgroup, address, problems, password, cpassword })
             });
 
             const data = await res.json();
@@ -68,10 +72,8 @@ export default function Login() {
             if (res.status === 400 || !data) {
                 window.alert("Invalid Credentials");
             } else {
-                //window.alert("Login successful");
-                
-              localStorage.setItem('Data', JSON.stringify(data));
-              console.log(data);
+                localStorage.setItem('Data', JSON.stringify(data));
+                console.log(data);
                 navigate("/doctors");
             }
         } catch (error) {
@@ -88,7 +90,7 @@ export default function Login() {
         <Container maxWidth="sm">
             <Box sx={{ height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                 <div className="form-container">
-                    <h1 style={{ textAlign: "center", color: "#b6b2b2" }}>{isLogin ? 'Patient Login Page' : 'Registeration Page'}</h1>
+                    <h1 style={{ textAlign: "center", color: "#b6b2b2" }}>{isLogin ? 'Patient Login Page' : 'Registration Page'}</h1>
                     {isLogin ? (
                         <form method='POST' className="register-form">
                             <TextField style={{ padding: "9px" }} type="text" name="email" value={user.email} onChange={handleInputs} label="Email" autoComplete="off" fullWidth />
@@ -99,10 +101,14 @@ export default function Login() {
                             <div style={{ display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column", cursor: "pointer" }}>or <Link onClick={handleToggle}>Register</Link></div>
                         </form>
                     ) : (
-                        <form method='POST' className="register-form">
+                        <form method='POST' className="register-form" style={{ maxHeight: '400px', overflowY: 'auto' }}>
                             <TextField style={{ padding: "9px" }} type="text" name="name" value={user.name} onChange={handleInputs} label="Name" autoComplete="off" fullWidth />
                             <TextField style={{ padding: "9px" }} type="text" name="email" value={user.email} onChange={handleInputs} label="Email" autoComplete="off" fullWidth />
                             <TextField style={{ padding: "9px" }} type="text" name="phone" value={user.phone} onChange={handleInputs} label="Phone" autoComplete="off" fullWidth />
+                            <TextField style={{ padding: "9px" }} type="text" name="age" value={user.age} onChange={handleInputs} label="Age" autoComplete="off" fullWidth />
+                            <TextField style={{ padding: "9px" }} type="text" name="bloodgroup" value={user.bloodgroup} onChange={handleInputs} label="Blood group" autoComplete="off" fullWidth />
+                            <TextField style={{ padding: "9px" }} type="text" name="address" value={user.address} onChange={handleInputs} label="Address" autoComplete="off" fullWidth />
+                            <TextField style={{ padding: "9px" }} type="text" name="problems" value={user.problems} onChange={handleInputs} label="Problems" autoComplete="off" fullWidth />
                             <TextField style={{ padding: "9px" }} type="password" name="password" value={user.password} onChange={handleInputs} label="Password" autoComplete="off" fullWidth />
                             <TextField style={{ padding: "9px" }} type="password" name="cpassword" value={user.cpassword} onChange={handleInputs} label="Confirm Password" autoComplete="off" fullWidth />
                             <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>

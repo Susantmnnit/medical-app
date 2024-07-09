@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Card, CardContent, Icon, Typography, Grid, Button } from '@mui/material';
 import MailOutlinedIcon from '@mui/icons-material/MailOutlined';
 import PermPhoneMsgOutlinedIcon from '@mui/icons-material/PermPhoneMsgOutlined';
@@ -12,12 +12,14 @@ import CoronavirusOutlinedIcon from '@mui/icons-material/CoronavirusOutlined';
 function Patients() {
   const { doctor_id } = useParams();
   const [slots, setSlots] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchSlots = async () => {
       try {
         const response = await axios.get(`http://localhost:8000/doctors/${doctor_id}/patients`);
         setSlots(response.data);
+        console.log("doctor--",response.data);
       } catch (error) {
         console.error('Error fetching slots:', error);
       }
@@ -26,8 +28,9 @@ function Patients() {
     fetchSlots();
   }, [doctor_id]);
     
-    const gotoroom = () => {
-      
+  const gotoroom = (confId) => {
+    const conf_id = confId;
+    navigate(`/joinconference/${conf_id}`);
   }
 
   return (
@@ -104,7 +107,7 @@ function Patients() {
                 </Grid>
                 </Grid>
                 <div style={{display:'flex',justifyContent:'center'}}>
-                    <Button className='doctor_button' sx={{ backgroundColor: '#629d62', margin: '9px', color: 'white' }} onClick={() => gotoroom()}>Got to room</Button> 
+                    <Button className='doctor_button' sx={{ backgroundColor: '#629d62', margin: '9px', color: 'white' }} onClick={() => gotoroom(slot.conference.slotId)}>Got to room</Button> 
                 </div>   
             </CardContent>
           </Card>

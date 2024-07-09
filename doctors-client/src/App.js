@@ -9,6 +9,8 @@ import DoctorsProfile from "./comp/DoctorsProfile";
 import "./App.css";
 import Doctorlogin from "./comp/Doctorlogin";
 import Patients from "./comp/Patients";
+import Zoom from "./comp/Zoom";
+import JoinConference from "./comp/Joinconference";
 
 function App() {
   const user = localStorage.getItem("Data")
@@ -26,6 +28,10 @@ function App() {
           <Route path="/doctors" element={<Doctors />} />
           <Route path="/userprofile" element={<Userprofile />} />
           <Route path="/patients/:doctor_id" element={<Patients />} />
+          <Route
+            path="/joinconference/:conference_id"
+            element={<JoinConference />}
+          />
           <Route
             path="/doctorsprofile/:doctor_id"
             element={<DoctorsProfile />}

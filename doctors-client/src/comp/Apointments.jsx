@@ -1,69 +1,90 @@
-import React from 'react';
-import { Box, Icon, Typography } from '@mui/material';
-import KeyboardDoubleArrowRightOutlinedIcon from '@mui/icons-material/KeyboardDoubleArrowRightOutlined';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { Box, Container, Typography, Grid, Paper, Button } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
-const appointments = [
-  { id: 1, time: '5:00 PM', date: '12 May', doctor: 'Dr. Soshi Samanta', status: 'Scheduled' },
-  { id: 2, time: '6:00 PM', date: '13 May', doctor: 'Dr. John Doe', status: 'Completed' },
-  { id: 2, time: '6:00 PM', date: '13 May', doctor: 'Dr. John Doe', status: 'Completed' },
-    { id: 2, time: '6:00 PM', date: '13 May', doctor: 'Dr. John Doe', status: 'Completed' },
-    { id: 2, time: '6:00 PM', date: '13 May', doctor: 'Dr. John Doe', status: 'Completed' },
-    { id: 2, time: '6:00 PM', date: '13 May', doctor: 'Dr. John Doe', status: 'Completed' },
-    { id: 2, time: '6:00 PM', date: '13 May', doctor: 'Dr. John Doe', status: 'Completed' },
-    { id: 2, time: '6:00 PM', date: '13 May', doctor: 'Dr. John Doe', status: 'Completed' },
-  { id: 2, time: '6:00 PM', date: '13 May', doctor: 'Dr. John Doe', status: 'Completed' },
-];
+export default function Apointments({ userId }) {
+  const [slots, setSlots] = useState([]);
+  const navigate = useNavigate();
+  useEffect(() => {
+    console.log("slots", userId);
+    const fetchSlots = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:8000/patients/${userId}/bookedSlots`
+        );
+        console.log("slots", response.data);
+        setSlots(response.data);
+      } catch (error) {
+        console.error("Error fetching booked slots:", error);
+      }
+    };
 
-export default function Appointments() {
+    fetchSlots();
+  }, [userId]);
+
+  const gotoroom = (confId) => {
+    const conf_id = confId;
+    navigate(`/joinconference/${conf_id}`);
+  }
+
   return (
-    <Box
-      sx={{
-        bgcolor: 'white',
-        borderRadius: '10px',
-        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-        height: '80vh',
-        display: 'flex',
-        flexDirection: 'column',
-        overflow: 'hidden',
-      }}
-    >
+    <Box sx={{ mb: 3 }}>
       <Typography
         variant="h6"
         sx={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          bgcolor: 'antiquewhite',
-          py: 2,
-          fontWeight: '500',
-          color: '#7d8285',
+          mb: 2,
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "#d0f2cb",
+          borderStartStartRadius: "10px",
+          borderStartEndRadius: "10px",
+          color: "#7e766d",
         }}
       >
-        Appointments
+        Your Apointments
       </Typography>
-      <Box
-        sx={{
-          flex: 1,
-          // overflowY: 'scroll',
-          padding: '5px',
-        }}
-      >
-        <ul className='appointments_list' style={{ listStyleType: 'none', padding: 0,overflowY:'scroll' }}>
-          {appointments.map(appointment => (
-            <li className='appointment' key={appointment.id}>
-              <Typography variant="body1" sx={{ mb: 0, display: 'flex', color: '#8c6b52' }}>
-                <Icon sx={{ color: '#dfc39c', mr: 1 }}>
-                  <KeyboardDoubleArrowRightOutlinedIcon />
-                </Icon>
-                Appointment with {appointment.doctor} at {appointment.time} on {appointment.date}
-              </Typography>
-              <Typography variant="body2" sx={{ color: appointment.status === 'Scheduled' ? 'red' : 'green', display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
-                {appointment.status}
-              </Typography>
-            </li>
+      {slots ? (
+        <Grid container style={{ height: "90vh", overflowY: "scroll" }}>
+          {slots.map((slot) => (
+            <Grid item xs={12} key={slot._id}>
+              <Paper elevation={2} sx={{ padding: "10px" }}>
+                <Typography variant="body1">
+                  <strong>Date:</strong>{" "}
+                  {new Date(slot.date).toLocaleDateString()}
+                </Typography>
+                <Typography variant="body1">
+                  <strong>Time:</strong> {slot.startTime} - {slot.endTime}
+                </Typography>
+                <Typography variant="body1">
+                  <strong>Status:</strong>{" "}
+                  {slot.isBooked ? "Booked" : "Available"}
+                </Typography>
+                <Typography variant="body1">
+                  <strong>Patient Name:</strong> {slot.patientInfo.name}
+                </Typography>
+                <div style={{display:'flex',justifyContent:'center'}}>
+                <Button className='doctor_button' sx={{ backgroundColor: '#629d62', margin: '9px', color: 'white' }} onClick={() => gotoroom(slot.conference_slot_id)}>Got to room</Button> 
+              </div>
+              </Paper>   
+            </Grid>
           ))}
-        </ul>
-      </Box>
+        </Grid>
+      ) : (
+        <Grid
+          container
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            color: "#bdbca5",
+          }}
+        >
+          no apointments booked
+        </Grid>
+      )}
     </Box>
   );
 }

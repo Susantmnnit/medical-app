@@ -14,7 +14,7 @@ export default function Slots({ slots,doctorId }) {
             if (response.status === 409) {
                 console.log(response.error);
             }
-        
+            alert("slot booked successfully");
         } catch (error) {
             if (error.response) {
                 console.error('Error response:', error.response.data);

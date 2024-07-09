@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { Button, Container, Select, MenuItem, FormControl, InputLabel, Box, Card, CardHeader, CardContent, Typography, Avatar, IconButton, Grid, CardMedia } from '@mui/material';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { useNavigate } from 'react-router-dom';  // Make sure to install react-router-dom
-import img from '../images/clinic.jpg'
+import { Button, Container, Select, MenuItem, FormControl, InputLabel, Box, Card, CardHeader, CardContent, Typography, Avatar, Grid, CardMedia } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import { cities, problems } from '../comp/Data';
+import img from '../images/clinic.jpg';
 
 export default function Doctors() {
   const navigate = useNavigate();
@@ -13,20 +13,23 @@ export default function Doctors() {
 
   const [doctors, setDoctors] = useState([]);
 
-  const cities = ['c2', 'c1', 'City C','Aurangabad'];
-  const problems = ['Problem 1', 'Problem 2', 'Problem 3',];
-
   const handleInputs = (e) => {
     setUser({ ...user, [e.target.name]: e.target.value });
   };
 
-
   const findDoctor = async (e) => {
     e.preventDefault();
-    const { city } = user;
+    const { city, problem } = user;
     try {
-      const url = new URL("http://localhost:8000/fetchcitydoctors");
-      url.search = new URLSearchParams({ city }).toString();
+      const url = new URL("http://localhost:8000/fetchdoctors");
+      const params = {};
+      if (city) {
+        params.city = city;
+      }
+      if (problem) {
+        params.problem = problem;
+      }
+      url.search = new URLSearchParams(params).toString();
 
       const response = await fetch(url, {
         method: 'GET',
@@ -45,16 +48,13 @@ export default function Doctors() {
     }
   };
 
-  console.log("doctors--", doctors);
-
   const handleCardClick = (doctor_id) => {
     console.log(`Navigating to doctorsprofile/${doctor_id}`);
     navigate(`/doctorsprofile/${doctor_id}`);
   };
 
-
   return (
-    <Container maxWidth="xl" sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column',alignItems:'center',padding:'20px' }}>
+    <Container maxWidth="xl" sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '20px' }}>
       <Typography
         variant="h6"
         component="div"
@@ -62,43 +62,49 @@ export default function Doctors() {
       >
         SEARCH FOR DOCTORS
       </Typography>
-      <form method='POST' onSubmit={findDoctor} style={{ padding: "10px", display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
-        <Box display="flex" gap={2} justifyContent="center" sx={{ width: '100vh' }}>
-          <FormControl fullWidth>
-            <InputLabel>City</InputLabel>
-            <Select value={user.city} onChange={handleInputs} name="city" label="City">
-              {cities.map((city, index) => (
-                <MenuItem key={index} value={city}>{city}</MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-          <FormControl fullWidth>
-            <InputLabel>Problems</InputLabel>
-            <Select value={user.problem} onChange={handleInputs} name="problem" label="Problem">
-              {problems.map((problem, index) => (
-                <MenuItem key={index} value={problem}>{problem}</MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </Box>
-        <Box display="flex" justifyContent="center" marginTop={2}>
-          <Button type="submit" variant="contained" style={{ borderRadius: "10px" }}>Find Doctors</Button>
-        </Box>
+      <form onSubmit={findDoctor} style={{ padding: "10px", width: '100%' }}>
+        <Grid container spacing={2} justifyContent="center">
+          <Grid item xs={12} sm={6} md={4}>
+            <FormControl fullWidth>
+              <InputLabel>City</InputLabel>
+              <Select value={user.city} onChange={handleInputs} name="city" label="City">
+                {cities.map((city, index) => (
+                  <MenuItem key={index} value={city}>{city}</MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} sm={6} md={4}>
+            <FormControl fullWidth>
+              <InputLabel>Problems</InputLabel>
+              <Select value={user.problem} onChange={handleInputs} name="problem" label="Problem">
+                {problems.map((problem, index) => (
+                  <MenuItem key={index} value={problem}>{problem}</MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item xs={12}>
+            <Box display="flex" justifyContent="center" marginTop={2}>
+              <Button type="submit" variant="contained" style={{ borderRadius: "10px" }}>Find Doctors</Button>
+            </Box>
+          </Grid>
+        </Grid>
       </form>
-      <hr style={{ color: '#1a4588', backgroundColor: '#1a4588', height: '2px', border: 'none', width: '61%', margin: '20px 0' }} />
+      <hr style={{ color: '#1a4588', backgroundColor: '#1a4588', height: '2px', border: 'none', width: '80%', margin: '20px 0' }} />
       <Grid container spacing={3} sx={{ width: '80%' }}>
         {doctors.map(doctor => (
           <Grid item xs={12} sm={6} md={4} lg={3} key={doctor._id}>
-            <Card 
-              sx={{ 
-                cursor: 'pointer', 
-                transition: 'transform 0.2s', 
-                '&:hover': { 
-                  transform: 'scale(1.05)' 
+            <Card
+              sx={{
+                cursor: 'pointer',
+                transition: 'transform 0.2s',
+                '&:hover': {
+                  transform: 'scale(1.05)'
                 },
                 boxShadow: 3,
                 borderRadius: 2
-              }} 
+              }}
               onClick={() => handleCardClick(doctor._id)}
             >
               <CardMedia
@@ -118,10 +124,10 @@ export default function Doctors() {
               />
               <CardContent>
                 <Typography variant="body2" color="text.secondary">
-                  Specializes in {doctor.specalist}.
+                  Specializes in {doctor.specialization}.
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  Location: {doctor.address},{doctor.pin}
+                  Location: {doctor.address}, {doctor.pin}
                 </Typography>
               </CardContent>
             </Card>

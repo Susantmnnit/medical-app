@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Box, Container, Typography, Grid, Paper } from "@mui/material";
+import { Box, Container, Typography, Grid, Paper, Button } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 const BookedSlots = ({ userId }) => {
   const [slots, setSlots] = useState([]);
-
+  const navigate = useNavigate();
+  
   useEffect(() => {
     console.log("slots", userId);
     const fetchSlots = async () => {
@@ -12,7 +14,7 @@ const BookedSlots = ({ userId }) => {
         const response = await axios.get(
           `http://localhost:8000/patients/${userId}/bookedSlots`
         );
-        console.log("slots", response.data);
+        console.log("slots---", response.data);
         setSlots(response.data);
       } catch (error) {
         console.error("Error fetching booked slots:", error);
@@ -21,6 +23,11 @@ const BookedSlots = ({ userId }) => {
 
     fetchSlots();
   }, [userId]);
+
+  const gotoroom = (confId) => {
+    const conf_id = confId;
+    navigate(`/joinconference/${conf_id}`);
+  }
 
   return (
     <Box sx={{ mb: 3 }}>
@@ -59,6 +66,9 @@ const BookedSlots = ({ userId }) => {
                 <Typography variant="body1">
                   <strong>Patient Name:</strong> {slot.patientInfo.name}
                 </Typography>
+                <div style={{display:'flex',justifyContent:'center'}}>
+                <Button className='doctor_button' sx={{ backgroundColor: '#629d62', margin: '9px', color: 'white' }} onClick={() => gotoroom(slot.conference_slot_id)}>Got to room</Button> 
+              </div>   
               </Paper>
             </Grid>
           ))}

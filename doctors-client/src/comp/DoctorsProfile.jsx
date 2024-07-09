@@ -125,7 +125,7 @@ export default function DoctorsProfile() {
                   <Grid item xs={6}>
                     <Typography variant="subtitle1" sx={{ color: '#6b6f7e', fontSize: '20px' }}>
                       Location
-                      <Typography component="div" sx={{ fontSize: '17px', color: '#768b9d',display:'flex',overflowX:'scroll' }}>
+                      <Typography component="div" sx={{ fontSize: '20px', color: '#768b9d',display:'flex',overflowX:'scroll' }}>
                         {doctor.address},{doctor.city},{doctor.pin}
                       </Typography>
                     </Typography>

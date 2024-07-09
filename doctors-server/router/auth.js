@@ -19,32 +19,6 @@ router.get("/", (req, res) => {
   res.send("Hello Wolrd in router/auth/home");
 });
 
-// router.post("/signup", async (req, res) => {
-//   const { name, email, phone, password, cpassword } = req.body;
-//   console.log(req.body);
-//   if (!name || !email || !phone || !password || !cpassword) {
-//     console.log(name);
-//     console.log(email);
-//     console.log(phone);
-//     console.log(password);
-//     console.log(cpassword);
-//     return res.json({ message: "plz filled the filed properly" });
-//   }
-//   try {
-//     const userExit = await User.findOne({ email: email });
-//     if (userExit) {
-//       return res.status(422).json({ message: "Email already exists" });
-//     } else if (password != cpassword) {
-//       return res.status(422).json({ message: "password not mached" });
-//     } else {
-//       const user = new User({ name, email, phone, password, cpassword });
-//       await user.save();
-//       res.status(201).json({ message: "registered successfully" });
-//     }
-//   } catch (err) {
-//     console.log(err);
-//   }
-// });
 router.post("/signup", async (req, res) => {
   const {
     name,
@@ -131,6 +105,7 @@ router.post("/login", async (req, res) => {
     console.log(err);
   }
 });
+
 router.post("/doctorsignup", async (req, res) => {
   const {
     name,
@@ -225,11 +200,18 @@ router.post("/doctorlogin", async (req, res) => {
   }
 });
 
-router.get("/fetchcitydoctors", async (req, res) => {
-  const { city } = req.query; // Ensure you're reading from query, not body
-  console.log("Fetching doctors for city:", city);
+router.get("/fetchdoctors", async (req, res) => {
+  const { city, problem } = req.query;
+  console.log("Fetching doctors for city:", city, "and problem:", problem);
   try {
-    const doctors = await Doctor.find({ city }).select(
+    let query = {};
+    // if (city) {
+    //   query.city = city;
+    // }
+    if (problem) {
+      query.specalist = problem;
+    }
+    const doctors = await Doctor.find(query).select(
       "-tokens -password -cpassword"
     );
     res.json(doctors);
@@ -382,136 +364,8 @@ router.post("/doctors/:doctorId/slots/:slotId/book", async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 });
-// router.post("/doctors/:doctorId/slots/:slotId/book", async (req, res) => {
-//   const { doctorId, slotId } = req.params;
-//   const { patientId } = req.body;
-
-//   if (!patientId) {
-//     return res.status(400).json({ error: "Patient ID is required" });
-//   }
-
-//   try {
-//     const doctor = await Doctor.findById(doctorId);
-//     if (!doctor) {
-//       console.error(`Doctor not found: ${doctorId}`);
-//       return res.status(404).json({ error: "Doctor not found" });
-//     }
-
-//     // Check if the patient has already booked a slot with this doctor
-//     const alreadyBooked = doctor.slots.some(
-//       (slot) => slot.patientId && slot.patientId.equals(patientId)
-//     );
-//     if (alreadyBooked) {
-//       console.error(
-//         `Patient ${patientId} has already booked a slot with doctor ${doctorId}`
-//       );
-//       return res
-//         .status(409)
-//         .json({ error: "Patient has already booked a slot with this doctor" });
-//     }
-
-//     const slot = doctor.slots.id(slotId);
-//     if (!slot) {
-//       console.error(`Slot not found: ${slotId}`);
-//       return res.status(404).json({ error: "Slot not found" });
-//     }
-
-//     if (slot.isBooked) {
-//       console.error(`Slot ${slotId} is already booked`);
-//       return res.status(400).json({ error: "Slot already booked" });
-//     }
-
-//     slot.isBooked = true;
-//     slot.patientId = patientId;
-
-//     await doctor.save();
-
-//     const updatedDoctor = await Doctor.findById(doctorId).populate(
-//       "slots.patientId"
-//     );
-//     const bookedSlot = updatedDoctor.slots.id(slotId);
-
-//     res
-//       .status(200)
-//       .json({ message: "Slot booked successfully", slot: bookedSlot });
-//   } catch (error) {
-//     console.error(`Error booking slot: ${error}`);
-//     res.status(500).json({ error: "Server error" });
-//   }
-// });
-
-// router.post("/doctors/:doctorId/slots/:slotId/book", async (req, res) => {
-//   const { doctorId, slotId } = req.params;
-//   const { patientId } = req.body;
-
-//   if (!patientId) {
-//     return res.status(400).json({ error: "Patient ID is required" });
-//   }
-
-//   try {
-//     const doctor = await Doctor.findById(doctorId);
-//     if (!doctor) {
-//       console.error(`Doctor not found: ${doctorId}`);
-//       return res.status(404).json({ error: "Doctor not found" });
-//     }
-
-//     // Check if the patient has already booked a slot with this doctor
-//     const alreadyBooked = doctor.slots.some(
-//       (slot) => slot.patientId && slot.patientId.equals(patientId)
-//     );
-//     if (alreadyBooked) {
-//       console.error(
-//         `Patient ${patientId} has already booked a slot with doctor ${doctorId}`
-//       );
-//       return res
-//         .status(409)
-//         .json({ error: "Patient has already booked a slot with this doctor" });
-//     }
-
-//     const slot = doctor.slots.id(slotId);
-//     if (!slot) {
-//       console.error(`Slot not found: ${slotId}`);
-//       return res.status(404).json({ error: "Slot not found" });
-//     }
-
-//     if (slot.isBooked) {
-//       console.error(`Slot ${slotId} is already booked`);
-//       return res.status(400).json({ error: "Slot already booked" });
-//     }
-
-//     // Generate or fetch the video conference details (example: Zoom meeting)
-//     const { meetingId, meetingLink, startTime } = await generateZoomMeeting(
-//       slot.date,
-//       slot.startTime
-//     );
-
-//     console.log(meetingId, meetingLink, startTime);
-//     // Update slot with video conference details
-//     slot.isBooked = true;
-//     slot.patientId = patientId;
-//     slot.videoConferenceId = meetingId;
-//     slot.videoConferenceLink = meetingLink;
-//     slot.videoConferenceStartTime = startTime;
-
-//     await doctor.save();
-
-//     // Fetch updated slot with populated patient details
-//     const updatedDoctor = await Doctor.findById(doctorId).populate(
-//       "slots.patientId"
-//     );
-//     const bookedSlot = updatedDoctor.slots.id(slotId);
-
-//     res
-//       .status(200)
-//       .json({ message: "Slot booked successfully", slot: bookedSlot });
-//   } catch (error) {
-//     console.error(`Error booking slot: ${error}`);
-//     res.status(500).json({ error: "Server error" });
-//   }
-// });
 
 /* join conference*/
-
 router.get("/:slotId", async (req, res) => {
   try {
     const conference = await Conference.findOne({ slotId: req.params.slotId });
@@ -697,6 +551,29 @@ router.get("/doctors/:doctorId/feedbacks", async (req, res) => {
   } catch (error) {
     console.error(`Error fetching feedbacks: ${error}`);
     res.status(500).json({ error: "Server error" });
+  }
+});
+
+//update user
+router.put("/patient/:id", async (req, res) => {
+  const { id } = req.params;
+  const { age, problems } = req.body;
+
+  try {
+    const updatedUser = await User.findByIdAndUpdate(
+      id,
+      { age, problems },
+      { new: true }
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json(updatedUser);
+  } catch (error) {
+    console.error("Error updating user:", error);
+    res.status(500).json({ message: "Server error" });
   }
 });
 
