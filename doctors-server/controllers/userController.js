@@ -5,15 +5,11 @@ const bcrypt = require("bcryptjs");
 
 require("../database/db");
 const User = require("../model/userschema");
-// const Doctor = require("../model/doctorschema");
+const Doctor = require("../model/doctorschema");
 const Appointment = require("../model/bookingschema");
 const Authenticate = require("../middleware/authentication");
 
-router.get("/", (req, res) => {
-  res.send("Hello Wolrd in router/auth/home");
-});
-
-router.post("/signup", async (req, res) => {
+const register = async (req, res) => {
   const { name, email, phone, password, cpassword } = req.body;
   console.log(req.body);
   if (!name || !email || !phone || !password || !cpassword) {
@@ -38,9 +34,9 @@ router.post("/signup", async (req, res) => {
   } catch (err) {
     console.log(err);
   }
-});
+};
 
-router.post("/login", async (req, res) => {
+const login = async (req, res) => {
   try {
     const { email, password } = req.body;
     if (!email || !password) {
@@ -70,52 +66,28 @@ router.post("/login", async (req, res) => {
   } catch (err) {
     console.log(err);
   }
-});
+};
 
-router.post("/booking", async (req, res) => {
-  const { user, doctor, appointmentDate, durationInMinutes, status } = req.body;
-  if (!user || !doctor || !appointmentDate || !durationInMinutes || !status) {
-    console.log(user);
-    console.log(doctor);
-    console.log(appointmentDate);
-    console.log(durationInMinutes);
-    console.log(status);
-    return res.json({ error: "Please fill all the fields properly" });
-  }
+const update = async (req, res) => {
+  const { id } = req.params;
+  const { age, problems } = req.body;
+
   try {
-    const existingAppointmentUser = await Appointment.findOne({ user: user });
-    const existingAppointmentDoctor = await Appointment.findOne({
-      doctor: doctor,
-    });
-    if (existingAppointmentUser || existingAppointmentDoctor) {
-      return res.status(422).json({
-        error: "User's appointment or doctor's appointment already exists",
-      });
-    } else {
-      const appointment = new Appointment({
-        user: user,
-        doctor: doctor,
-        appointmentDate: new Date(appointmentDate),
-        durationInMinutes: durationInMinutes,
-        status: status,
-      });
-      await appointment.save();
-      res.status(201).json({ message: "Appointment registered successfully" });
+    const updatedUser = await User.findByIdAndUpdate(
+      id,
+      { age, problems },
+      { new: true }
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found" });
     }
-  } catch (err) {
-    console.log(err);
-    return res.status(500).json({ error: "Internal server error" });
+
+    res.status(200).json(updatedUser);
+  } catch (error) {
+    console.error("Error updating user:", error);
+    res.status(500).json({ message: "Server error" });
   }
-});
+};
 
-router.get("/about", Authenticate, (req, res) => {
-  console.log("About");
-  res.send(req.rootUser);
-});
-
-router.get("/logout", (req, res) => {
-  console.log("logout page");
-  res.clearCookie("jwtoken", { path: "/" });
-  res.status(200).send("User Logout");
-});
-module.exports = router;
+module.exports = { register, login, update };

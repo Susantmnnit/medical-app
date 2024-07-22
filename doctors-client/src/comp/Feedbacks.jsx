@@ -19,7 +19,7 @@ export default function Feedbacks({doctorId}) {
       }
       
       try {
-        const response = await axios.get(`http://localhost:8000/doctors/${doctorId}/feedbacks`);
+        const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/doctors/${doctorId}/feedbacks`);
         setFeedbacks(response.data);
         console.log("feedbacks--",feedbacks);
       } catch (error) {
@@ -40,7 +40,7 @@ export default function Feedbacks({doctorId}) {
     }
 
     try {
-      const response = await axios.post(`http://localhost:8000/doctors/${doctorId}/feedback`, {
+      const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/doctors/${doctorId}/feedback`, {
         patientId,
         comment: newFeedback
       });

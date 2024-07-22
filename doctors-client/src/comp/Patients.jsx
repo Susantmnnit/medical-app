@@ -17,7 +17,7 @@ function Patients() {
   useEffect(() => {
     const fetchSlots = async () => {
       try {
-        const response = await axios.get(`http://localhost:8000/doctors/${doctor_id}/patients`);
+        const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/doctors/${doctor_id}/patients`);
         setSlots(response.data);
         console.log("doctor--",response.data);
       } catch (error) {
@@ -79,7 +79,7 @@ function Patients() {
                       </Icon>
                     </Grid>
                     <Grid item>
-                      <Typography variant="body1" >Problems:<b style={{color:'#be2b2b'}}>"heart strokes"</b></Typography>
+                      <Typography variant="body1" >Problems:<b style={{color:'#be2b2b'}}>{slot.patient.problems}</b></Typography>
                     </Grid>
                   </Grid>
                 </Grid>

@@ -26,7 +26,7 @@ export default function DoctorsProfile() {
 
   const handleDoctorsDetails = async (req, res) => {
     try {
-      const doctor = await axios.get(`http://localhost:8000/getdoctorwithid/${doctor_id}`);
+      const doctor = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/getdoctorwithid/${doctor_id}`);
       setDoctors(doctor.data);
       setSlots(doctor.data.slots);
       console.log(doctor);
@@ -108,7 +108,7 @@ export default function DoctorsProfile() {
                   </Grid>
                   <Grid item xs={6}>
                     <Typography variant="subtitle1" sx={{ color: '#6b6f7e', fontSize: '20px' }}>
-                      Specialists
+                      Specialization
                       <Typography component="p" sx={{ fontSize: '17px', color: '#768b9d' }}>
                         {doctor.specalist}
                       </Typography>

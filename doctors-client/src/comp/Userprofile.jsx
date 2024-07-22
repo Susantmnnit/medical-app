@@ -41,7 +41,7 @@ export default function Userprofile() {
     };
 
     
-    axios.put(`http://localhost:8000/patient/${user_data._id}`, updatedUserData)
+    axios.put(`${process.env.REACT_APP_BACKEND_URL}/patient/${user_data._id}`, updatedUserData)
       .then(response => {
         console.log('User data updated successfully:', response.data);
        

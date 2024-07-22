@@ -23,7 +23,7 @@ export default function Doctorlogin() {
         }
 
         try {
-            const res = await fetch("http://localhost:8000/doctorlogin/", {
+            const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/doctorlogin/`, {
                 method: 'POST',
                 headers: {
                     "Content-Type": "application/json"

@@ -319,6 +319,44 @@ input {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
+.help-center {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  background-color: #f9f9f9;
+}
+
+.help-center h1 {
+  color: #007bff;
+}
+
+.help-center h2 {
+  color: #007bff;
+  margin-top: 20px;
+}
+
+.help-center h3 {
+  color: #333;
+}
+
+.help-center p {
+  margin: 10px 0;
+}
+
+.help-center a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.help-center a:hover {
+  text-decoration: underline;
+}
+
+.help-center section {
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
 @media (max-width: 600px) {
   .slot-card {
     width: 100%;

@@ -11,7 +11,7 @@ const SlotModal = ({ show, handleClose, doctorId }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(`http://localhost:8000/addSlot/${doctorId}`, {
+      await axios.post(`${process.env.REACT_APP_BACKEND_URL}/addSlot/${doctorId}`, {
         date,
         startTime,
         endTime,

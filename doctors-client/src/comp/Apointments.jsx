@@ -11,7 +11,7 @@ export default function Apointments({ userId }) {
     const fetchSlots = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8000/patients/${userId}/bookedSlots`
+          `${process.env.REACT_APP_BACKEND_URL}/patients/${userId}/bookedSlots`
         );
         console.log("slots", response.data);
         setSlots(response.data);
@@ -63,7 +63,8 @@ export default function Apointments({ userId }) {
                   {slot.isBooked ? "Booked" : "Available"}
                 </Typography>
                 <Typography variant="body1">
-                  <strong>Patient Name:</strong> {slot.patientInfo.name}
+                  {/* <strong>Patient Name:</strong> {slot.patientInfo.name} */}
+                  <strong>Doctor Name:</strong> {slot.doctorInfo.name}
                 </Typography>
                 <div style={{display:'flex',justifyContent:'center'}}>
                 <Button className='doctor_button' sx={{ backgroundColor: '#629d62', margin: '9px', color: 'white' }} onClick={() => gotoroom(slot.conference_slot_id)}>Got to room</Button> 

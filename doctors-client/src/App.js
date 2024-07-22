@@ -11,6 +11,7 @@ import Doctorlogin from "./comp/Doctorlogin";
 import Patients from "./comp/Patients";
 import Zoom from "./comp/Zoom";
 import JoinConference from "./comp/Joinconference";
+import HelpCenter from "./comp/Help";
 
 function App() {
   const user = localStorage.getItem("Data")
@@ -24,6 +25,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/helpcentre" element={<HelpCenter />} />
           <Route path="/doctorlogin" element={<Doctorlogin />} />
           <Route path="/doctors" element={<Doctors />} />
           <Route path="/userprofile" element={<Userprofile />} />

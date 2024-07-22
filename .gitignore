@@ -1,0 +1,13 @@
+node_modules/
+
+.DS_Store
+
+config.env
+
+doctors-server/package.json
+
+doctors-server/package-lock.json
+
+doctors-client/package.json
+
+doctors-client/package-lock.json

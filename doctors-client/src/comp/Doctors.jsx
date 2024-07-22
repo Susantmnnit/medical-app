@@ -21,7 +21,7 @@ export default function Doctors() {
     e.preventDefault();
     const { city, problem } = user;
     try {
-      const url = new URL("http://localhost:8000/fetchdoctors");
+      const url = new URL(`${process.env.REACT_APP_BACKEND_URL}/fetchdoctors`);
       const params = {};
       if (city) {
         params.city = city;

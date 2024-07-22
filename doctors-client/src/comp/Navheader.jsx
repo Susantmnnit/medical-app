@@ -36,6 +36,10 @@ export default function Navheader() {
     handleLoginClose();
   };
 
+  const handleHelp = (e) => {
+    navigate('/helpcentre');
+  }
+
   const goToProfile = () => {
     if (user.userLogin) {
       navigate("/userprofile");
@@ -66,7 +70,10 @@ export default function Navheader() {
           MedConsult
         </Typography>
         <Box sx={{ display: { sm: 'block' } }}>
-          <motion.div className='button-to-go' whileHover={{ scale: 1.1 }} transition={{ type: "spring", stiffness: 400, damping: 10 }} whileTap={{ scale: 0.9 }}>
+          <div className='button-to-go' whileHover={{ scale: 1.1 }} transition={{ type: "spring", stiffness: 400, damping: 10 }} whileTap={{ scale: 0.9 }}>
+            <Button sx={{ color: '#fff' }} onClick={handleHelp}>
+              contact
+            </Button>
             {user ? (user.userLogin ? (
               <>
                 <Button sx={{ color: '#fff' }} onClick={handleMenu}>
@@ -88,7 +95,7 @@ export default function Navheader() {
                 </Menu>
               </>
             )) : (
-              <>
+                <>
                 <Button sx={{ color: '#fff' }} onClick={handleLoginMenu}>
                   Login
                 </Button>
@@ -98,7 +105,7 @@ export default function Navheader() {
                 </Menu>
               </>
             )}
-          </motion.div>
+          </div>
         </Box>
       </Toolbar>
     </AppBar>

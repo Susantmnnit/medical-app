@@ -10,7 +10,7 @@ export default function Slots({ slots,doctorId }) {
     const bookSlot = async (slotId) => {
         const patientId = user.userLogin._id;
         try {
-            const response = await axios.post(`http://localhost:8000/doctors/${doctorId}/slots/${slotId}/book`, { patientId });
+            const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/doctors/${doctorId}/slots/${slotId}/book`, { patientId });
             if (response.status === 409) {
                 console.log(response.error);
             }
@@ -32,7 +32,7 @@ export default function Slots({ slots,doctorId }) {
     const deleteSlot = async (slotId) => {
         const patientId = user.doctorLogin._id;
         try {
-        const response = await axios.delete(`http://localhost:8000/deleteSlot/${doctorId}/${slotId}`, {patientId});
+        const response = await axios.delete(`${process.env.REACT_APP_BACKEND_URL}/deleteSlot/${doctorId}/${slotId}`, {patientId});
         console.log('Slot deleted successfully:', response.data);
         
         } catch (error) {
