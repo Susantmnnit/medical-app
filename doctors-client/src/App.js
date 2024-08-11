@@ -13,6 +13,7 @@ import Zoom from "./comp/Zoom";
 import JoinConference from "./comp/Joinconference";
 import HelpCenter from "./comp/Help";
 import { useSelector } from "react-redux";
+import Allapointments from "./comp/Allapointments";
 
 function App() {
   const token = localStorage.getItem("token");
@@ -57,6 +58,10 @@ function App() {
           <Route
             path="/doctorsprofile/:doctor_id"
             element={isAuthenticated && <DoctorsProfile />}
+          />
+          <Route
+            path="/allapointments"
+            element={isAuthenticatedPatients && <Allapointments />}
           />
         </Routes>
       </div>

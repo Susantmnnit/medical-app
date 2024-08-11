@@ -7,7 +7,7 @@ export default function Apointments({ userId }) {
   const [slots, setSlots] = useState([]);
   const navigate = useNavigate();
   useEffect(() => {
-    console.log("slots", userId);
+    // console.log("slots", userId);
     const fetchSlots = async () => {
       try {
         const response = await axios.get(
@@ -26,6 +26,10 @@ export default function Apointments({ userId }) {
   const gotoroom = (confId) => {
     const conf_id = confId;
     navigate(`/joinconference/${conf_id}`);
+  }
+
+  const goToSeeAllApointment = () => {
+    navigate('/allapointments')
   }
 
   return (
@@ -49,7 +53,7 @@ export default function Apointments({ userId }) {
       {slots ? (
         <Grid container style={{ height: "90vh", overflowY: "scroll" }}>
           {slots.map((slot) => (
-            <Grid item xs={12} key={slot._id}>
+            <Grid item xs={12} key={slot._id} onClick={() => goToSeeAllApointment()} style={{cursor:'pointer'}}>
               <Paper elevation={2} sx={{ padding: "10px" }}>
                 <Typography variant="body1">
                   <strong>Date:</strong>{" "}
