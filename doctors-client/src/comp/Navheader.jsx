@@ -2,13 +2,24 @@ import * as React from 'react';
 import { AppBar, Box, Toolbar, Typography, Button, Menu, MenuItem } from '@mui/material';
 import { motion } from "framer-motion";
 import MedicationLiquidOutlinedIcon from '@mui/icons-material/MedicationLiquidOutlined';
-import { useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { logoutStudent } from '../redux/Patientslice';
+import { logoutDoctor } from '../redux/Doctorslice';
 
 export default function Navheader() {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [loginMenuEl, setLoginMenuEl] = React.useState(null);
-  const user = localStorage.getItem('Data') ? JSON.parse(localStorage.getItem('Data')) : null;
+
+  const isAuthenticatedPatients = useSelector(state => state.patients.token !== null);
+  const isAuthenticatedDoctors = useSelector(state => state.doctors.token !== null);
+  const isAuthenticated = isAuthenticatedPatients || isAuthenticatedDoctors;
+
+  const Patient = useSelector(state => state.patients);
+  const Doctor = useSelector(state => state.doctors);
+
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -35,17 +46,19 @@ export default function Navheader() {
     navigate("/doctorlogin");
     handleLoginClose();
   };
-
+  const handleDoctors = () => {
+    navigate("/doctors");
+   }
   const handleHelp = (e) => {
     navigate('/helpcentre');
   }
 
   const goToProfile = () => {
-    if (user.userLogin) {
+    if (isAuthenticatedPatients) {
       navigate("/userprofile");
     }
     else {
-      const doctor_id = user.doctorLogin._id;
+      const doctor_id = Doctor._id;
       navigate(`/doctorsprofile/${doctor_id}`);
     }
     handleClose();
@@ -53,9 +66,11 @@ export default function Navheader() {
 
   const logout = () => {
     localStorage.removeItem('Data');
+    dispatch(logoutStudent());
+    dispatch(logoutDoctor());
     navigate("/");
     handleClose();
-    window.location.reload();
+    // window.location.reload();
   };
 
   return (
@@ -74,10 +89,13 @@ export default function Navheader() {
             <Button sx={{ color: '#fff' }} onClick={handleHelp}>
               contact
             </Button>
-            {user ? (user.userLogin ? (
+            {isAuthenticated ? (isAuthenticatedPatients ? (
               <>
+                <Button sx={{ color: '#fff' }} onClick={handleDoctors}>
+                  find doctors
+                </Button>
                 <Button sx={{ color: '#fff' }} onClick={handleMenu}>
-                  {user.userLogin.name}
+                  {Patient.name}
                 </Button>
                 <Menu id="menu-appbar" anchorEl={anchorEl} anchorOrigin={{ vertical: 'top', horizontal: 'right' }} keepMounted transformOrigin={{ vertical: 'top', horizontal: 'right' }} open={Boolean(anchorEl)} onClose={handleClose}>
                   <MenuItem onClick={goToProfile}>Profile</MenuItem>
@@ -87,7 +105,7 @@ export default function Navheader() {
             ) : (
                 <>
                 <Button sx={{ color: '#fff' }} onClick={handleMenu}>
-                  {user.doctorLogin.name}
+                  {Doctor.name}
                 </Button>
                 <Menu id="menu-appbar" anchorEl={anchorEl} anchorOrigin={{ vertical: 'top', horizontal: 'right' }} keepMounted transformOrigin={{ vertical: 'top', horizontal: 'right' }} open={Boolean(anchorEl)} onClose={handleClose}>
                   <MenuItem onClick={goToProfile}>Profile</MenuItem>

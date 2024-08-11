@@ -1,6 +1,8 @@
 import { Box, Button, Container, Link, TextField } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from "react-router-dom";
+import { redirect_to_dashboard_doctors } from '../redux/Doctorslice';
 
 export default function Doctorlogin() {
     const [isLogin, setIsLogin] = useState(true);
@@ -8,8 +10,15 @@ export default function Doctorlogin() {
         email: "",
         password: ""
     });
+    
     const navigate = useNavigate();
-
+    const dispatch = useDispatch();
+    const isAuthenticated = useSelector((state) => state.doctors.token !== null);
+    // useSelector((state) => {
+    //     console.log(state);
+    // });
+    const doctor_id = useSelector((state) => state.doctors._id);
+    
     const handleInputs = (e) => {
         setUser({ ...user, [e.target.name]: e.target.value });
     };
@@ -32,14 +41,26 @@ export default function Doctorlogin() {
             });
 
             const data = await res.json();
-
+            // console.log("data--", data.data);
             if (res.status === 400 || !data) {
                 window.alert("Invalid Credentials");
             } else {
                 //window.alert("Login successful");
-              localStorage.setItem('Data', JSON.stringify(data));
-                console.log(data);
-                const doctor_id = data.doctorLogin._id;
+              localStorage.setItem('token', data.token);
+                dispatch(redirect_to_dashboard_doctors({
+                    _id: data.data.doctorLogin._id,
+                    token: data.data.token,
+                    name: data.data.doctorLogin.name,
+                    email: data.data.doctorLogin.email,
+                    address: data.data.doctorLogin.address,
+                    city: data.data.doctorLogin.city,
+                    pin: data.data.doctorLogin.pin,
+                    clinic_name: data.data.doctorLogin.clinic_name,
+                    phone: data.data.doctorLogin.phone,
+                    specalist: data.data.doctorLogin.specalist,
+                }));
+                const doctor_id = data.data.doctorLogin._id;
+                // // console.log("dosctors_id-",doctor_id);
                 navigate(`/doctorsprofile/${doctor_id}`);
             }
         } catch (error) {

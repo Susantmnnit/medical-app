@@ -1,5 +1,6 @@
 // src/data.js
 export const cities = [
+  'none',
   'Agra',
   'Ahmedabad',
   'Ajmer',
@@ -95,6 +96,7 @@ export const cities = [
 ].sort();
 
 export const problems = [
+  'none',
   'Cardiology',
   'Dermatology',
   'Endocrinology',

@@ -12,11 +12,18 @@ import Patients from "./comp/Patients";
 import Zoom from "./comp/Zoom";
 import JoinConference from "./comp/Joinconference";
 import HelpCenter from "./comp/Help";
+import { useSelector } from "react-redux";
 
 function App() {
-  const user = localStorage.getItem("Data")
-    ? JSON.parse(localStorage.getItem("Data"))
-    : null;
+  const token = localStorage.getItem("token");
+  // console.log(token);
+  const isAuthenticatedPatients = useSelector(
+    (state) => state.patients.token !== null
+  );
+  const isAuthenticatedDoctors = useSelector(
+    (state) => state.doctors.token !== null
+  );
+  const isAuthenticated = isAuthenticatedPatients || isAuthenticatedDoctors;
 
   return (
     <div>
@@ -24,23 +31,32 @@ function App() {
       <div style={{ marginTop: "60px", backgroundColor: "white" }}>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/helpcentre" element={<HelpCenter />} />
-          <Route path="/doctorlogin" element={<Doctorlogin />} />
-          <Route path="/doctors" element={<Doctors />} />
-          <Route path="/userprofile" element={<Userprofile />} />
-          <Route path="/patients/:doctor_id" element={<Patients />} />
+          {!isAuthenticated && (
+            <>
+              <Route path="/patientlogin" element={<Login />} />
+              <Route path="/helpcentre" element={<HelpCenter />} />
+              <Route path="/doctorlogin" element={<Doctorlogin />} />
+            </>
+          )}
+          <Route
+            path="/doctors"
+            element={isAuthenticatedPatients && <Doctors />}
+          />
+          <Route
+            path="/userprofile"
+            element={isAuthenticatedPatients && <Userprofile />}
+          />
+          <Route
+            path="/patients/:doctor_id"
+            element={isAuthenticatedDoctors && <Patients />}
+          />
           <Route
             path="/joinconference/:conference_id"
-            element={<JoinConference />}
+            element={isAuthenticated && <JoinConference />}
           />
           <Route
             path="/doctorsprofile/:doctor_id"
-            element={<DoctorsProfile />}
-          />
-          <Route
-            path="*"
-            element={<Navigate to={user ? "/doctors" : "/login"} replace />}
+            element={isAuthenticated && <DoctorsProfile />}
           />
         </Routes>
       </div>

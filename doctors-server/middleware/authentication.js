@@ -1,26 +1,28 @@
 const jwt = require("jsonwebtoken");
-const User = require("../model/userschema");
+const {
+  isValidStudentId,
+  isVerifiedStudentId,
+} = require("../operation/operate");
 
 const authenticate = async (req, res, next) => {
-  console.log(req.body);
-  console.log(req.header);
   try {
-    const token = req.header("Authorization").replace("Bearer ", "");
-    const decoded = jwt.verify(token, process.env.SECRET_KEY);
-    const user = await User.findOne({
-      _id: decoded._id,
-      "tokens.token": token,
-    });
-
-    if (!user) {
-      throw new Error();
+    const { _id } = await jwt.verify(
+      req.get("authorization"),
+      process.env.SECRET_KEY
+    );
+    if (!(await isValidStudentId(_id))) {
+      res.send({ status: 400, message: "You are not authorized to do this" });
+    } else {
+      if (await isVerifiedStudentId(_id)) {
+        req.sid = _id;
+        next();
+      } else {
+        res.send({ status: 403, message: "You aren't verified please verify" });
+      }
     }
-
-    req.token = token;
-    req.user = user;
-    next();
-  } catch (error) {
-    res.status(401).send({ error: "Please authenticate." });
+  } catch (err) {
+    console.log(err);
+    res.send({ status: 400, message: "You are not authorized to do thisss" });
   }
 };
 

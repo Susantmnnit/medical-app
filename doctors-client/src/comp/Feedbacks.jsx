@@ -3,12 +3,17 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { Box, Button, Icon, Typography, Input, Divider } from '@mui/material';
 import KeyboardDoubleArrowRightOutlinedIcon from '@mui/icons-material/KeyboardDoubleArrowRightOutlined';
+import { useSelector } from 'react-redux';
 
 export default function Feedbacks({doctorId}) {
   const [feedbacks, setFeedbacks] = useState([]);
   const [newFeedback, setNewFeedback] = useState('');
-  const user = localStorage.getItem("Data") ? JSON.parse(localStorage.getItem("Data")) : null;
-  const patientId = user && user.userLogin ? user.userLogin._id : null;
+  
+  // const user = localStorage.getItem("Data") ? JSON.parse(localStorage.getItem("Data")) : null;
+  const isAuthenticatedPatients = useSelector(
+    (state) => state.patients.token !== null
+  );
+  const patientId = useSelector((state) => state.patients._id);
 
   useEffect(() => {
     // console.log(doctorId);
@@ -21,7 +26,7 @@ export default function Feedbacks({doctorId}) {
       try {
         const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/doctors/${doctorId}/feedbacks`);
         setFeedbacks(response.data);
-        console.log("feedbacks--",feedbacks);
+        // console.log("feedbacks--",feedbacks);
       } catch (error) {
         console.error('Error fetching feedbacks:', error);
       }
@@ -101,7 +106,7 @@ export default function Feedbacks({doctorId}) {
           ))}
         </ul>
       </Box>
-      {user && user.userLogin && (
+      {isAuthenticatedPatients && (
         <Box sx={{ p: 2, display: 'flex', alignItems: 'center' }}>
           <Input
             placeholder='Add a new feedback'

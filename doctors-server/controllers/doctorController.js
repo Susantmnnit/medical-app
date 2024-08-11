@@ -9,6 +9,7 @@ const Doctor = require("../model/doctorschema");
 const Appointment = require("../model/bookingschema");
 const Authenticate = require("../middleware/authentication");
 const { Feedback } = require("../model/feedbackscema");
+const jwt = require("jsonwebtoken");
 
 const doctorSignup = async (req, res) => {
   const {
@@ -79,22 +80,38 @@ const doctorLogin = async (req, res) => {
       return res.status(400).json({ error: "plz fill the data" });
     }
 
-    const doctorLogin = await Doctor.findOne({ email: email });
+    const doctor = await Doctor.findOne({ email: email });
     // console.log(userLogin);
-    if (doctorLogin) {
-      const isMatch = await bcrypt.compare(password, doctorLogin.password);
-      const token = await doctorLogin.generateAuthToken();
-      console.log(token);
-      //cookie
-      res.cookie("jwtoken", token, {
-        expires: new Date(Date.now() + 25892000000),
-        httpOnly: true,
+    if (doctor) {
+      const isMatch = await bcrypt.compare(password, doctor.password);
+
+      const token = jwt.sign({ _id: doctor._id }, process.env.SECRET_KEY, {
+        expiresIn: "7d",
       });
+      console.log(token);
 
       if (!isMatch) {
         res.status(400).json({ error: "Invalid Credential" });
       } else {
-        res.json({ message: "user login successfull", doctorLogin });
+        const doctorLogin = {
+          _id: doctor._id,
+          name: doctor.name,
+          email: doctor.email,
+          address: doctor.address,
+          city: doctor.city,
+          pin: doctor.pin,
+          clinic_name: doctor.clinic_name,
+          specalist: doctor.specalist,
+          phone: doctor.phone,
+        };
+        res.send({
+          status: 200,
+          data: {
+            message: "student successfully logged in",
+            token: token,
+            doctorLogin: doctorLogin,
+          },
+        });
       }
     } else {
       res.status(400).json({ error: "Invalid Credential" });
@@ -109,10 +126,10 @@ const fetchDoctors = async (req, res) => {
   console.log("Fetching doctors for city:", city, "and problem:", problem);
   try {
     let query = {};
-    // if (city) {
-    //   query.city = city;
-    // }
-    if (problem) {
+    if (city != "none" && city != null) {
+      query.city = city;
+    }
+    if (problem != "none" && problem != null) {
       query.specalist = problem;
     }
     const doctors = await Doctor.find(query).select(

@@ -13,13 +13,14 @@ function Patients() {
   const { doctor_id } = useParams();
   const [slots, setSlots] = useState([]);
   const navigate = useNavigate();
-
+  // console.log("doctor_id",doctor_id)
   useEffect(() => {
+    // console.log("doctor_id---",doctor_id)
     const fetchSlots = async () => {
       try {
         const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/doctors/${doctor_id}/patients`);
         setSlots(response.data);
-        console.log("doctor--",response.data);
+        // console.log("doctor--",response.data);
       } catch (error) {
         console.error('Error fetching slots:', error);
       }

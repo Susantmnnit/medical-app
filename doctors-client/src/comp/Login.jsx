@@ -1,6 +1,8 @@
 import { Box, Button, Container, Link, TextField } from '@mui/material';
 import React, { useState } from 'react';
 import { useNavigate } from "react-router-dom";
+import { redirect_to_dashboard } from '../redux/Patientslice';
+import { useDispatch, useSelector } from 'react-redux';
 
 export default function Login() {
     const [isLogin, setIsLogin] = useState(true);
@@ -16,6 +18,11 @@ export default function Login() {
         cpassword: ""
     });
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const isAuthenticated = useSelector((state) => state.patients.token !== null);
+//   useSelector((state)=>{
+//     console.log(state);
+//   })
 
     const handleInputs = (e) => {
         setUser({ ...user, [e.target.name]: e.target.value });
@@ -68,12 +75,23 @@ export default function Login() {
             });
 
             const data = await res.json();
-
+            // console.log("data----",data.data)
             if (res.status === 400 || !data) {
                 window.alert("Invalid Credentials");
             } else {
-                localStorage.setItem('Data', JSON.stringify(data));
-                console.log(data);
+                localStorage.setItem('token', data.data.token);
+                dispatch(redirect_to_dashboard({
+                    _id: data.data.userLogin._id,
+                    token: data.data.userLogin.token,
+                    name: data.data.userLogin.name,
+                    email: data.data.userLogin.email,
+                    address: data.data.userLogin.address,
+                    age: data.data.userLogin.age,
+                    bloodgroup: data.data.userLogin.bloodgroup,
+                    problems: data.data.userLogin.problems,
+                    phone: data.data.userLogin.phone,
+              }));
+                // console.log(data);
                 navigate("/doctors");
             }
         } catch (error) {

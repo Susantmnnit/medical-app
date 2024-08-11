@@ -6,14 +6,17 @@ import axios from 'axios'
 import Feedbacks from './Feedbacks';
 import Apointments from './Apointments';
 import BookedSlots from './bookedSlots';
+import { useDispatch, useSelector } from 'react-redux';
+import { redirect_to_dashboard } from '../redux/Patientslice';
 
 export default function Userprofile() {
 
-  const user = localStorage.getItem('Data') ? JSON.parse(localStorage.getItem('Data')) : null;
-  const user_data = user.userLogin;
+  // const user = 
+  const user_data = useSelector((state) => state.patients);
   const [age, setAge] = useState(1);
   const [problem, setProblem] = useState("");
   const [openModal, setOpenModal] = useState(false);
+  const dispatch = useDispatch();
 
   const handleOpenModal = () => {
     setOpenModal(true);
@@ -44,7 +47,18 @@ export default function Userprofile() {
     axios.put(`${process.env.REACT_APP_BACKEND_URL}/patient/${user_data._id}`, updatedUserData)
       .then(response => {
         console.log('User data updated successfully:', response.data);
-       
+        const userLogin = response.data;
+        dispatch(redirect_to_dashboard({
+          _id: userLogin._id,
+          token: userLogin.token,
+          name: userLogin.name,
+          email: userLogin.email,
+          address: userLogin.address,
+          age: userLogin.age,
+          bloodgroup: userLogin.bloodgroup,
+          problems: userLogin.problems,
+          phone: userLogin.phone,
+        }));
         localStorage.setItem('Data', JSON.stringify({ userLogin: updatedUserData }));
         handleCloseModal();
       })

@@ -1,24 +1,26 @@
 import { Box, Container, Typography, Grid, Button } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import image from '../images/brotherimg.png';
-import { Navigate, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios'
 import Feedbacks from './Feedbacks';
 import SlotModal from './Slotmodal';
 import Slots from './Slots';
 import BookedSlots from './bookedSlots';
+import { useSelector } from 'react-redux';
 
 export default function DoctorsProfile() {
-  const user = localStorage.getItem("Data")
-    ? JSON.parse(localStorage.getItem("Data"))
-    : null;
-
-  console.log("user", user);
+  const isAuthenticatedPatients = useSelector(
+    (state) => state.patients.token !== null
+  );
+  const user = useSelector((state) => state.patients);
+  // const doctors = useSelector((state) => state.doctors);
+  // console.log("user", user);
   const { doctor_id } = useParams();
   const [doctor, setDoctors] = useState("");
   const [slots, setSlots] = useState([]);
   const navigate = useNavigate();
-  console.log("doctor_id", doctor_id);
+  // console.log("doctor_id", doctor_id);
 
   useEffect(() => {
     handleDoctorsDetails();
@@ -29,7 +31,7 @@ export default function DoctorsProfile() {
       const doctor = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/getdoctorwithid/${doctor_id}`);
       setDoctors(doctor.data);
       setSlots(doctor.data.slots);
-      console.log(doctor);
+      // console.log(doctor);
     } catch (err) {
       console.log(err);
     }
@@ -140,7 +142,7 @@ export default function DoctorsProfile() {
                   </Grid>
                 </Grid>
               </Box>
-              {user.userLogin ? (
+              {isAuthenticatedPatients ? (
                 <Slots slots={ slots } doctorId={doctor_id} />
               ) : (
                   <div className="added-slots">
@@ -173,8 +175,8 @@ export default function DoctorsProfile() {
               alignItems:'center'
             }}
           >
-            { user.userLogin &&
-              <BookedSlots userId={user.userLogin._id} />
+            { isAuthenticatedPatients &&
+              <BookedSlots userId={user._id} />
             }
             <Feedbacks doctorId={doctor_id} />
           </Grid>
