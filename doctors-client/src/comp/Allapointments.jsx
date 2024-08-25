@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { Card, CardContent, Icon, Typography, Grid, Button } from '@mui/material';
+import { Card, CardContent, Icon, Typography, Grid, Button, Link } from '@mui/material';
 import MailOutlinedIcon from '@mui/icons-material/MailOutlined';
 import PermPhoneMsgOutlinedIcon from '@mui/icons-material/PermPhoneMsgOutlined';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
@@ -28,7 +28,7 @@ function Allapointments() {
         const response = await axios.get(
           `${process.env.REACT_APP_BACKEND_URL}/patients/bookedSlots`,config
         );
-        // console.log("slots", response.data);
+        console.log("slots--", response.data);
         setSlots(response.data);
       } catch (error) {
         alert("Error fetching booked slots:", error);
@@ -43,6 +43,9 @@ function Allapointments() {
     navigate(`/joinconference/${conf_id}`);
   }
 
+  const goToProfile = (doctor_id) => {
+    navigate(`/doctorsprofile/${doctor_id}`);
+  }
 
   return (
     <div className='patient-div'>
@@ -60,7 +63,11 @@ function Allapointments() {
                       </Icon>
                     </Grid>
                     <Grid item>
-                      <Typography variant="h5">{slot.doctorInfo.name}</Typography>
+                      <Link onClick={() => goToProfile(slot.doctorInfo._id)} style={{ textDecoration: 'none',cursor:'pointer' }}>
+                        <Typography variant="h5" color="primary" component="span" sx={{ cursor: 'pointer' }}>
+                          {slot.doctorInfo.name}
+                        </Typography>
+                      </Link>
                     </Grid>
                   </Grid>
                   <Grid container spacing={1} alignItems="center">
