@@ -46,7 +46,7 @@ export default function Doctorlogin() {
                 window.alert("Invalid Credentials");
             } else {
                 //window.alert("Login successful");
-              localStorage.setItem('token', data.token);
+                localStorage.setItem('token', data.data.token);
                 dispatch(redirect_to_dashboard_doctors({
                     _id: data.data.doctorLogin._id,
                     token: data.data.token,

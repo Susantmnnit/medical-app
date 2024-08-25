@@ -46,14 +46,14 @@ const booking = async (req, res) => {
       res.status(201).json({ message: "Appointment registered successfully" });
     }
   } catch (err) {
-    console.log(err);
+    // console.log(err);
     return res.status(500).json({ error: "Internal server error" });
   }
 };
 
 const bookSlot = async (req, res) => {
   const { doctorId, slotId } = req.params;
-  const { patientId } = req.body;
+  const patientId = req._id;
   const title = "Welcome to Conference";
   if (!patientId) {
     return res.status(400).json({ error: "Patient ID is required" });
@@ -62,7 +62,7 @@ const bookSlot = async (req, res) => {
   try {
     const doctor = await Doctor.findById(doctorId);
     if (!doctor) {
-      console.error(`Doctor not found: ${doctorId}`);
+      // console.error(`Doctor not found: ${doctorId}`);
       return res.status(404).json({ error: "Doctor not found" });
     }
 
@@ -71,9 +71,9 @@ const bookSlot = async (req, res) => {
       (slot) => slot.patientId && slot.patientId.equals(patientId)
     );
     if (alreadyBooked) {
-      console.error(
-        `Patient ${patientId} has already booked a slot with doctor ${doctorId}`
-      );
+      // console.error(
+      //   `Patient ${patientId} has already booked a slot with doctor ${doctorId}`
+      // );
       return res
         .status(409)
         .json({ error: "Patient has already booked a slot with this doctor" });
@@ -81,12 +81,12 @@ const bookSlot = async (req, res) => {
 
     const slot = doctor.slots.id(slotId);
     if (!slot) {
-      console.error(`Slot not found: ${slotId}`);
+      // console.error(`Slot not found: ${slotId}`);
       return res.status(404).json({ error: "Slot not found" });
     }
 
     if (slot.isBooked) {
-      console.error(`Slot ${slotId} is already booked`);
+      // console.error(`Slot ${slotId} is already booked`);
       return res.status(400).json({ error: "Slot already booked" });
     }
 
@@ -115,13 +115,13 @@ const bookSlot = async (req, res) => {
       conference: newConference,
     });
   } catch (error) {
-    console.error(`Error booking slot: ${error}`);
+    // console.error(`Error booking slot: ${error}`);
     res.status(500).json({ error: "Server error" });
   }
 };
 
 const bookedSlots = async (req, res) => {
-  const { patientId } = req.params;
+  const patientId = req._id;
 
   try {
     const bookedSlots = await Doctor.aggregate([
@@ -134,7 +134,7 @@ const bookedSlots = async (req, res) => {
       },
       {
         $lookup: {
-          from: "users", // Assuming your user collection is named "users"
+          from: "users",
           localField: "slots.patientId",
           foreignField: "_id",
           as: "patientInfo",
@@ -143,7 +143,7 @@ const bookedSlots = async (req, res) => {
       { $unwind: "$patientInfo" },
       {
         $lookup: {
-          from: "conferences", // Assuming your conference collection is named "conferences"
+          from: "conferences",
           localField: "slots.conferenceId",
           foreignField: "_id",
           as: "conferenceInfo",

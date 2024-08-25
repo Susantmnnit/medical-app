@@ -11,17 +11,24 @@ import CoronavirusOutlinedIcon from '@mui/icons-material/CoronavirusOutlined';
 import { useSelector } from 'react-redux';
 
 function Allapointments() {
+  const token = localStorage.getItem("token");
   const [slots, setSlots] = useState([]);
     const navigate = useNavigate();
     const userId = useSelector((state) => state.patients._id);
   useEffect(() => {
     // console.log("slots", userId);
     const fetchSlots = async () => {
+      const config = {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      };
       try {
         const response = await axios.get(
-          `${process.env.REACT_APP_BACKEND_URL}/patients/${userId}/bookedSlots`
+          `${process.env.REACT_APP_BACKEND_URL}/patients/bookedSlots`,config
         );
-        console.log("slots", response.data);
+        // console.log("slots", response.data);
         setSlots(response.data);
       } catch (error) {
         console.error("Error fetching booked slots:", error);

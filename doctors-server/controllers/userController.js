@@ -62,7 +62,7 @@ const register = async (req, res) => {
       res.status(201).json({ message: "registered successfully" });
     }
   } catch (err) {
-    console.log(err);
+    res.status(500).json({ message: "internal server error" });
   }
 };
 
@@ -109,28 +109,39 @@ const login = async (req, res) => {
       res.status(400).json({ error: "Invalid Credential" });
     }
   } catch (err) {
-    console.log(err);
+    res.status(500).json({ error: "Internal server error" });
   }
 };
 
 const update = async (req, res) => {
-  const { id } = req.params;
+  const id = req._id;
   const { age, problems } = req.body;
-
+  // console.log(id);
   try {
-    const updatedUser = await User.findByIdAndUpdate(
+    const updatedData = await User.findByIdAndUpdate(
       id,
       { age, problems },
       { new: true }
     );
 
-    if (!updatedUser) {
+    // console.log(updatedData);
+    if (!updatedData) {
       return res.status(404).json({ message: "User not found" });
     }
 
+    const updatedUser = {
+      _id: updatedData._id,
+      name: updatedData.name,
+      email: updatedData.email,
+      address: updatedData.address,
+      age: updatedData.age,
+      bloodgroup: updatedData.bloodgroup,
+      problems: updatedData.problems,
+      phone: updatedData.phone,
+    };
     res.status(200).json(updatedUser);
   } catch (error) {
-    console.error("Error updating user:", error);
+    // console.error("Error updating user:", error);
     res.status(500).json({ message: "Server error" });
   }
 };

@@ -281,10 +281,13 @@ input {
   font-size: 16px;
 }
  .added-slots{
+  height: 90vh;
+  width: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   overflow: hidden;
+  padding: 20px;
  }
  .css-mhc70k-MuiGrid-root>.MuiGrid-item {
   padding-left: 8px;

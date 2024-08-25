@@ -157,7 +157,7 @@ const getDoctorWithId = async (req, res) => {
 };
 
 const addSlot = async (req, res) => {
-  const { doctorId } = req.params;
+  const doctorId = req._id;
   const { date, startTime, endTime } = req.body;
 
   if (!date || !startTime || !endTime) {
@@ -182,8 +182,8 @@ const addSlot = async (req, res) => {
 };
 
 const deleteSlot = async (req, res) => {
-  const { doctorId, slotId } = req.params;
-
+  const { slotId } = req.params;
+  const doctorId = req._id;
   try {
     const doctor = await Doctor.findById(doctorId);
     if (!doctor) {
@@ -206,7 +206,7 @@ const deleteSlot = async (req, res) => {
 };
 
 const doctorsPatient = async (req, res) => {
-  const { doctorId } = req.params;
+  const doctorId = req._id;
 
   try {
     const doctor = await Doctor.findById(doctorId).populate({
@@ -299,6 +299,40 @@ const doctorsFeedbacks = async (req, res) => {
   }
 };
 
+const updateDoctor = async (req, res) => {
+  const id = req._id;
+  const { clinic_name, address, city, pin } = req.body;
+
+  try {
+    const updatedData = await Doctor.findByIdAndUpdate(
+      id,
+      { clinic_name, address, city, pin },
+      { new: true }
+    );
+
+    if (!updatedData) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const updatedDoctor = {
+      _id: updatedData._id,
+      name: updatedData.name,
+      email: updatedData.email,
+      address: updatedData.address,
+      city: updatedData.city,
+      pin: updatedData.pin,
+      clinic_name: updatedData.clinic_name,
+      specalist: updatedData.specalist,
+      phone: updatedData.phone,
+    };
+    // console.log("updatedDoctor", updatedDoctor);
+    res.status(200).json(updatedDoctor);
+  } catch (error) {
+    console.error("Error updating user:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 module.exports = {
   doctorSignup,
   doctorLogin,
@@ -309,4 +343,5 @@ module.exports = {
   doctorsPatient,
   doctorsFeedback,
   doctorsFeedbacks,
+  updateDoctor,
 };

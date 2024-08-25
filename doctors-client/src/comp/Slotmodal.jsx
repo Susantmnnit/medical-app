@@ -3,19 +3,26 @@ import axios from "axios";
 // import "./SlotModal.css"; // Custom CSS for styling
 
 const SlotModal = ({ show, handleClose, doctorId }) => {
+  const token = localStorage.getItem("token");
   const [date, setDate] = useState("");
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
   const [message, setMessage] = useState({ type: "", text: "" });
 
   const handleSubmit = async (e) => {
+    const config = {
+        headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+        }
+    };
     e.preventDefault();
     try {
-      await axios.post(`${process.env.REACT_APP_BACKEND_URL}/addSlot/${doctorId}`, {
+      await axios.post(`${process.env.REACT_APP_BACKEND_URL}/addSlot`, {
         date,
         startTime,
         endTime,
-      });
+      },config);
       setMessage({ type: "success", text: "Slot added successfully!" });
       setTimeout(() => {
         setMessage({ type: "success", text: "Slot added successfully!"});

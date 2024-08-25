@@ -11,6 +11,8 @@ export default function Doctors() {
     problem: '',
   });
 
+  const token = localStorage.getItem("token");
+
   const [doctors, setDoctors] = useState([]);
 
   const handleInputs = (e) => {
@@ -49,6 +51,11 @@ export default function Doctors() {
   };
 
   const handleCardClick = (doctor_id) => {
+    console.log("token--",token)
+    if (!token) {
+      navigate('/patientlogin');
+      return;
+    }
     console.log(`Navigating to doctorsprofile/${doctor_id}`);
     navigate(`/doctorsprofile/${doctor_id}`);
   };

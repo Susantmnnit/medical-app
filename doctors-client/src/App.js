@@ -14,6 +14,8 @@ import JoinConference from "./comp/Joinconference";
 import HelpCenter from "./comp/Help";
 import { useSelector } from "react-redux";
 import Allapointments from "./comp/Allapointments";
+import Slotmodule from "./comp/Slotmodule";
+import Apoint from "./comp/Apoint";
 
 function App() {
   const token = localStorage.getItem("token");
@@ -31,18 +33,13 @@ function App() {
       <Navheader />
       <div style={{ marginTop: "60px", backgroundColor: "white" }}>
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<Doctors />} />
           {!isAuthenticated && (
             <>
               <Route path="/patientlogin" element={<Login />} />
-              <Route path="/helpcentre" element={<HelpCenter />} />
               <Route path="/doctorlogin" element={<Doctorlogin />} />
             </>
           )}
-          <Route
-            path="/doctors"
-            element={isAuthenticatedPatients && <Doctors />}
-          />
           <Route
             path="/userprofile"
             element={isAuthenticatedPatients && <Userprofile />}
@@ -63,6 +60,15 @@ function App() {
             path="/allapointments"
             element={isAuthenticatedPatients && <Allapointments />}
           />
+          <Route
+            path="/apoint"
+            element={isAuthenticatedPatients && <Apoint />}
+          />
+          <Route
+            path="/slotmodule"
+            element={isAuthenticatedDoctors && <Slotmodule />}
+          />
+          <Route path="/helpcentre" element={<HelpCenter />} />
         </Routes>
       </div>
     </div>

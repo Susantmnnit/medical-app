@@ -92,7 +92,7 @@ export default function Login() {
                     phone: data.data.userLogin.phone,
               }));
                 // console.log(data);
-                navigate("/doctors");
+                navigate("/");
             }
         } catch (error) {
             console.log("Error logging in", error);

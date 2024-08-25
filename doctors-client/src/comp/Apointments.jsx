@@ -4,14 +4,21 @@ import { Box, Container, Typography, Grid, Paper, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
 export default function Apointments({ userId }) {
+  const token = localStorage.getItem("token");
   const [slots, setSlots] = useState([]);
   const navigate = useNavigate();
   useEffect(() => {
     // console.log("slots", userId);
     const fetchSlots = async () => {
+      const config = {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      };
       try {
         const response = await axios.get(
-          `${process.env.REACT_APP_BACKEND_URL}/patients/${userId}/bookedSlots`
+          `${process.env.REACT_APP_BACKEND_URL}/patients/bookedSlots`,config
         );
         console.log("slots", response.data);
         setSlots(response.data);

@@ -1,4 +1,4 @@
-import { Box, Container, Typography, Grid, Button } from '@mui/material';
+import { Box, Container, Typography, Grid, Button, DialogActions, TextField, DialogContent, DialogTitle, Dialog } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import image from '../images/brotherimg.png';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -7,15 +7,17 @@ import Feedbacks from './Feedbacks';
 import SlotModal from './Slotmodal';
 import Slots from './Slots';
 import BookedSlots from './bookedSlots';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { redirect_to_dashboard_doctors } from '../redux/Doctorslice';
 
 export default function DoctorsProfile() {
   const isAuthenticatedPatients = useSelector(
     (state) => state.patients.token !== null
   );
   const user = useSelector((state) => state.patients);
-  // const doctors = useSelector((state) => state.doctors);
+  const doctors = useSelector((state) => state.doctors);
   // console.log("user", user);
+  const token = localStorage.getItem("token");
   const { doctor_id } = useParams();
   const [doctor, setDoctors] = useState("");
   const [slots, setSlots] = useState([]);
@@ -36,16 +38,73 @@ export default function DoctorsProfile() {
       console.log(err);
     }
   }
+  const dispatch = useDispatch();
+  const [city, setCity] = useState("");
+  const [clinic_name, setClinic] = useState("");
+  const [pin, setPin] = useState("");
+  const [address, setAddress] = useState("");
+  const [openModal, setOpenModal] = useState(false);
+  const handleOpenModal = () => {
+    setOpenModal(true);
+  };
 
-  const [showModal, setShowModal] = useState(false);
-  
-  const handleOpenModal = () => setShowModal(true);
-  const handleCloseModal = () => setShowModal(false);
+  const handleCloseModal = () => {
+    setOpenModal(false);
+  };
 
-  const seePatient = () => {
-    navigate(`/patients/${doctor_id}`);
-  }
+  const handleChange = (e) => {
+    const { id, value } = e.target;
+    if (id === 'pin') {
+      setPin(value);
+    } else if (id === 'clinic_name') {
+      setClinic(value);
+    }else if (id === 'city') {
+      setCity(value);
+    }else if (id === 'address') {
+      setAddress(value);
+    }
+  };
 
+  const handleSaveChanges = () => {
+    
+    const updatedUserData = {
+      ...doctors,
+      pin: pin,
+      clinic_name: clinic_name,
+      city: city,
+      address: address
+    };
+    // console.log(token);
+    const config = {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    };
+    
+    axios.put(`${process.env.REACT_APP_BACKEND_URL}/doctor`, updatedUserData,config)
+      .then(response => {
+        // console.log('User data updated successfully:', response.data);
+        alert('User data updated successfully refresh to see changes')
+        const doctorLogin = response.data;
+        dispatch(redirect_to_dashboard_doctors({
+          _id: doctorLogin._id,
+          name: doctorLogin.name,
+          email: doctorLogin.email,
+          address: doctorLogin.address,
+          city: doctorLogin.city,
+          pin: doctorLogin.pin,
+          clinic_name: doctorLogin.clinic_name,
+          specalist: doctorLogin.specalist,
+          phone: doctorLogin.phone,
+        }));
+        handleCloseModal();
+      })
+      .catch(error => {
+        console.error('Error updating user data:', error);
+        
+      });
+  };
 
   return (
     <Container maxWidth="md">
@@ -141,32 +200,66 @@ export default function DoctorsProfile() {
                     </Typography>
                   </Grid>
                 </Grid>
+                
               </Box>
               {isAuthenticatedPatients ? (
                 <Slots slots={ slots } doctorId={doctor_id} />
               ) : (
-                  <div className="added-slots">
-                    <div className="doctorpatient">
-                      <Button
-                className='doctor_button'
-                    sx={{ backgroundColor: '#f59f43eb', margin: '9px', color: 'white' }}
-                    onClick={handleOpenModal}
-              >
-                Add Slots
-                    </Button>
-                    <Button
-                className='doctor_button'
-                    sx={{ backgroundColor: '#f59f43eb', margin: '9px', color: 'white' }}
-                    onClick={seePatient}
-              >
-                See Patients
-                    </Button>
-                    </div>
-                    <Slots slots={slots} doctorId={doctor_id} />
-                </div>
+                  <button onClick={handleOpenModal} className='edit_button'>Edit</button>
+                  // <div className="added-slots"></div>
               )}
-              <SlotModal show={showModal} handleClose={handleCloseModal} doctorId={doctor_id} />
             </Box>
+              <Dialog open={openModal} onClose={handleCloseModal}>
+                <DialogTitle style={{display:'flex',justifyContent:'center',alignItems:'center'}}>
+                  <Typography>Edit Profile Details</Typography>
+                </DialogTitle>
+                <DialogContent>
+                  <TextField
+                    autoFocus
+                    margin="dense"
+                    id="clinic_name"
+                    label="Clinic"
+                    type="text"
+                    fullWidth
+                    value={clinic_name}
+                    onChange={handleChange}
+                />
+                <TextField
+                    autoFocus
+                    margin="dense"
+                    id="address"
+                    label="Address"
+                    type="text"
+                    fullWidth
+                    value={address}
+                    onChange={handleChange}
+                />
+                <TextField
+                    autoFocus
+                    margin="dense"
+                    id="city"
+                    label="City"
+                    type="text"
+                    fullWidth
+                    value={city}
+                    onChange={handleChange}
+                />
+                <TextField
+                    autoFocus
+                    margin="dense"
+                    id="pin"
+                    label="Pin"
+                    type="text"
+                    fullWidth
+                    value={pin}
+                    onChange={handleChange}
+                  />
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={handleCloseModal}>Cancel</Button>
+                  <Button onClick={handleSaveChanges} variant="contained" color="primary">Save Changes</Button>
+                </DialogActions>
+              </Dialog>
           </Grid>
           <Grid item xs={12} md={4}
             sx={{
@@ -175,9 +268,9 @@ export default function DoctorsProfile() {
               alignItems:'center'
             }}
           >
-            { isAuthenticatedPatients &&
+            {/* { isAuthenticatedPatients &&
               <BookedSlots userId={user._id} />
-            }
+            } */}
             <Feedbacks doctorId={doctor_id} />
           </Grid>
         </Grid>

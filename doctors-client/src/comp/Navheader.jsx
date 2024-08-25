@@ -47,7 +47,7 @@ export default function Navheader() {
     handleLoginClose();
   };
   const handleDoctors = () => {
-    navigate("/doctors");
+    navigate("/");
    }
   const handleHelp = (e) => {
     navigate('/helpcentre');
@@ -64,8 +64,20 @@ export default function Navheader() {
     handleClose();
   };
 
+  const seeSlots = () => {
+    navigate('/slotmodule')
+  }
+
+  const seePatient = () => {
+    navigate(`/patients/${Doctor._id}`);
+  }
+
+  const goToApointment = () => {
+    navigate('/apoint')
+  }
+
   const logout = () => {
-    localStorage.removeItem('Data');
+    localStorage.removeItem('token');
     dispatch(logoutStudent());
     dispatch(logoutDoctor());
     navigate("/");
@@ -99,6 +111,7 @@ export default function Navheader() {
                 </Button>
                 <Menu id="menu-appbar" anchorEl={anchorEl} anchorOrigin={{ vertical: 'top', horizontal: 'right' }} keepMounted transformOrigin={{ vertical: 'top', horizontal: 'right' }} open={Boolean(anchorEl)} onClose={handleClose}>
                   <MenuItem onClick={goToProfile}>Profile</MenuItem>
+                  <MenuItem onClick={goToApointment}>Apointments</MenuItem>
                   <MenuItem onClick={logout}>Logout</MenuItem>
                 </Menu>
               </>
@@ -108,7 +121,9 @@ export default function Navheader() {
                   {Doctor.name}
                 </Button>
                 <Menu id="menu-appbar" anchorEl={anchorEl} anchorOrigin={{ vertical: 'top', horizontal: 'right' }} keepMounted transformOrigin={{ vertical: 'top', horizontal: 'right' }} open={Boolean(anchorEl)} onClose={handleClose}>
-                  <MenuItem onClick={goToProfile}>Profile</MenuItem>
+                    <MenuItem onClick={goToProfile}>Profile</MenuItem>
+                    <MenuItem onClick={seeSlots}>See Slots</MenuItem>
+                    <MenuItem onClick={seePatient}>Patients</MenuItem>
                   <MenuItem onClick={logout}>Logout</MenuItem>
                 </Menu>
               </>

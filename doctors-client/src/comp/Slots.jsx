@@ -10,16 +10,21 @@ export default function Slots({ slots, doctorId }) {
     const isAuthenticatedDoctors = useSelector(
     (state) => state.doctors.token !== null
     );
-    
+    const token = localStorage.getItem("token");
     const user = useSelector((state) => state.patients);
     const doctor = useSelector((state) => state.doctors);
-    const token = user.token;
+    // const token = user.token;
     // console.log("toekn-", token);
     
     const bookSlot = async (slotId) => {
-        const patientId = user._id;
+        const config = {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        };
         try {
-            const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/doctors/${doctorId}/slots/${slotId}/book`, { patientId });
+            const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/doctors/${doctorId}/slots/${slotId}/book`,{}, config);
             if (response.status === 409) {
                 console.log(response.error);
             }
@@ -39,11 +44,16 @@ export default function Slots({ slots, doctorId }) {
     };
 
     const deleteSlot = async (slotId) => {
-        const patientId = doctor._id;
+        const config = {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        };
         try {
-        const response = await axios.delete(`${process.env.REACT_APP_BACKEND_URL}/deleteSlot/${doctorId}/${slotId}`, {patientId});
-        console.log('Slot deleted successfully:', response.data);
-        
+        const response = await axios.delete(`${process.env.REACT_APP_BACKEND_URL}/deleteSlot/${slotId}`,config);
+        // console.log('Slot deleted successfully:', response.data);
+        alert("slot deleted successfully");
         } catch (error) {
         console.error('Error booking slot:', error);
         }

@@ -8,7 +8,7 @@ const JoinConference = () => {
     const [slotId, setSlotId] = useState(conf_id); 
     const [conference, setConference] = useState(null);
 
-    console.log("conf--", conf_id);
+    // console.log("conf--", conf_id);
 
     const handleJoin = async (e) => {
         e.preventDefault();

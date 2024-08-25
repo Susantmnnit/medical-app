@@ -12,6 +12,7 @@ import { redirect_to_dashboard } from '../redux/Patientslice';
 export default function Userprofile() {
 
   // const user = 
+  const token = localStorage.getItem("token");
   const user_data = useSelector((state) => state.patients);
   const [age, setAge] = useState(1);
   const [problem, setProblem] = useState("");
@@ -43,14 +44,18 @@ export default function Userprofile() {
       problems: problem,
     };
 
-    
-    axios.put(`${process.env.REACT_APP_BACKEND_URL}/patient/${user_data._id}`, updatedUserData)
+    const config = {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    };
+    axios.put(`${process.env.REACT_APP_BACKEND_URL}/patient`, updatedUserData,config)
       .then(response => {
         console.log('User data updated successfully:', response.data);
         const userLogin = response.data;
         dispatch(redirect_to_dashboard({
           _id: userLogin._id,
-          token: userLogin.token,
           name: userLogin.name,
           email: userLogin.email,
           address: userLogin.address,
@@ -59,7 +64,7 @@ export default function Userprofile() {
           problems: userLogin.problems,
           phone: userLogin.phone,
         }));
-        localStorage.setItem('Data', JSON.stringify({ userLogin: updatedUserData }));
+        // localStorage.setItem('Data', JSON.stringify({ userLogin: updatedUserData }));
         handleCloseModal();
       })
       .catch(error => {

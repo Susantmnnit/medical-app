@@ -24,12 +24,14 @@ const {
   deleteSlot,
   doctorsPatient,
   doctorsFeedback,
+  updateDoctor,
 } = require("../controllers/doctorController");
 const {
   bookSlot,
   conference,
   bookedSlots,
 } = require("../controllers/appointController");
+const auth = require("../middleware/authentication");
 
 router.get("/", (req, res) => {
   res.send("Hello Wolrd in router/auth/home");
@@ -58,17 +60,17 @@ router.get("/fetchdoctors", async (req, res) => {
 
 router.get("/getdoctorwithid/:doctorId", getDoctorWithId);
 
-router.post("/addSlot/:doctorId", addSlot);
+router.post("/addSlot", auth, addSlot);
 
-router.delete("/deleteSlot/:doctorId/:slotId", deleteSlot);
+router.delete("/deleteSlot/:slotId", auth, deleteSlot);
 
-router.post("/doctors/:doctorId/slots/:slotId/book", bookSlot);
+router.post("/doctors/:doctorId/slots/:slotId/book", auth, bookSlot);
 
 router.get("/:slotId", conference);
 
-router.get("/patients/:patientId/bookedSlots", bookedSlots);
+router.get("/patients/bookedSlots", auth, bookedSlots);
 
-router.get("/doctors/:doctorId/patients", doctorsPatient);
+router.get("/doctors/patients", auth, doctorsPatient);
 
 router.post("/doctors/:doctorId/feedback", doctorsFeedback);
 
@@ -91,30 +93,9 @@ router.get("/doctors/:doctorId/feedbacks", async (req, res) => {
   }
 });
 
-router.put("/patient/:id", update);
+router.put("/patient", auth, update);
 
-//update user
-router.put("/patient/:id", async (req, res) => {
-  const { id } = req.params;
-  const { age, problems } = req.body;
-
-  try {
-    const updatedUser = await User.findByIdAndUpdate(
-      id,
-      { age, problems },
-      { new: true }
-    );
-
-    if (!updatedUser) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    res.status(200).json(updatedUser);
-  } catch (error) {
-    console.error("Error updating user:", error);
-    res.status(500).json({ message: "Server error" });
-  }
-});
+router.put("/doctor", auth, updateDoctor);
 
 router.get("/logout", (req, res) => {
   console.log("logout page");

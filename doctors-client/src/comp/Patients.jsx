@@ -10,6 +10,7 @@ import AccessTimeOutlinedIcon from '@mui/icons-material/AccessTimeOutlined';
 import CoronavirusOutlinedIcon from '@mui/icons-material/CoronavirusOutlined';
 
 function Patients() {
+  const token = localStorage.getItem("token");
   const { doctor_id } = useParams();
   const [slots, setSlots] = useState([]);
   const navigate = useNavigate();
@@ -17,8 +18,14 @@ function Patients() {
   useEffect(() => {
     // console.log("doctor_id---",doctor_id)
     const fetchSlots = async () => {
+      const config = {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      };
       try {
-        const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/doctors/${doctor_id}/patients`);
+        const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/doctors/patients`,config);
         setSlots(response.data);
         // console.log("doctor--",response.data);
       } catch (error) {
@@ -114,7 +121,7 @@ function Patients() {
           </Card>
         ))
       ) : (
-        <p>No patients have booked slots.</p>
+        <p style={{display:'flex',justifyContent:'center',alignItems:'center'}}>No patients have booked slots.</p>
       )}
     </div>
   );
