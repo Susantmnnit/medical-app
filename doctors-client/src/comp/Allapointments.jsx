@@ -28,7 +28,6 @@ function Allapointments() {
         const response = await axios.get(
           `${process.env.REACT_APP_BACKEND_URL}/patients/bookedSlots`,config
         );
-        console.log("slots--", response.data);
         setSlots(response.data);
       } catch (error) {
         alert("Error fetching booked slots:", error);
