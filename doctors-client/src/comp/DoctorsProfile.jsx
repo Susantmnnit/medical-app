@@ -1,12 +1,10 @@
 import { Box, Container, Typography, Grid, Button, DialogActions, TextField, DialogContent, DialogTitle, Dialog } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import image from '../images/brotherimg.png';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import axios from 'axios'
 import Feedbacks from './Feedbacks';
-import SlotModal from './Slotmodal';
 import Slots from './Slots';
-import BookedSlots from './bookedSlots';
 import { useDispatch, useSelector } from 'react-redux';
 import { redirect_to_dashboard_doctors } from '../redux/Doctorslice';
 
@@ -14,14 +12,12 @@ export default function DoctorsProfile() {
   const isAuthenticatedPatients = useSelector(
     (state) => state.patients.token !== null
   );
-  const user = useSelector((state) => state.patients);
   const doctors = useSelector((state) => state.doctors);
   // console.log("user", user);
   const token = localStorage.getItem("token");
   const { doctor_id } = useParams();
   const [doctor, setDoctors] = useState("");
   const [slots, setSlots] = useState([]);
-  const navigate = useNavigate();
   // console.log("doctor_id", doctor_id);
 
   useEffect(() => {
@@ -101,7 +97,7 @@ export default function DoctorsProfile() {
         handleCloseModal();
       })
       .catch(error => {
-        console.error('Error updating user data:', error);
+        alert('Error updating user data:', error);
         
       });
   };

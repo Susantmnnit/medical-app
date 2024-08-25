@@ -53,11 +53,10 @@ export default function Homeview() {
                     </CardContent>
                     <motion.div
                         whileHover={{ scale: 1.1 }}
-                        transition={{ type: "spring", stiffness: 300, damping: 15 }}
+                        transition={{ type: "spring", stiffness: 300, damping: 15,duration: 1, delay: 1.5 }}
                         whileTap={{ scale: 0.9 }}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 1, delay: 1.5 }}
                     >
                         <CardActions>
                             <Button variant="contained" color="primary" endIcon={<SendIcon />} onClick={handleLoginClick} sx={{ textTransform: 'none', px: 4, py: 1.5, borderRadius: '50px' }}>

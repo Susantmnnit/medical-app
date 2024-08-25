@@ -2,7 +2,7 @@ import { Box, Button, Container, Link, TextField } from '@mui/material';
 import React, { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import { redirect_to_dashboard } from '../redux/Patientslice';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 export default function Login() {
     const [isLogin, setIsLogin] = useState(true);
@@ -19,10 +19,6 @@ export default function Login() {
     });
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const isAuthenticated = useSelector((state) => state.patients.token !== null);
-//   useSelector((state)=>{
-//     console.log(state);
-//   })
 
     const handleInputs = (e) => {
         setUser({ ...user, [e.target.name]: e.target.value });
@@ -52,7 +48,7 @@ export default function Login() {
                 setIsLogin(true);
             }
         } catch (error) {
-            console.log("Error during registration", error);
+            // console.log("Error during registration", error);
             window.alert("Error during registration");
         }
     };
@@ -95,7 +91,6 @@ export default function Login() {
                 navigate("/");
             }
         } catch (error) {
-            console.log("Error logging in", error);
             window.alert("Error logging in");
         }
     };

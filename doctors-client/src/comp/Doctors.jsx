@@ -46,17 +46,17 @@ export default function Doctors() {
       const data = await response.json();
       setDoctors(data);
     } catch (error) {
-      console.error('Failed to fetch doctors:', error);
+      alert('Failed to fetch doctors:', error);
     }
   };
 
   const handleCardClick = (doctor_id) => {
-    console.log("token--",token)
+    // console.log("token--",token)
     if (!token) {
       navigate('/patientlogin');
       return;
     }
-    console.log(`Navigating to doctorsprofile/${doctor_id}`);
+    // console.log(`Navigating to doctorsprofile/${doctor_id}`);
     navigate(`/doctorsprofile/${doctor_id}`);
   };
 

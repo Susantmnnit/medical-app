@@ -1,13 +1,8 @@
-const express = require("express");
-const router = express.Router();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 require("../database/db");
 const User = require("../model/userschema");
-const Doctor = require("../model/doctorschema");
-const Appointment = require("../model/bookingschema");
-const Authenticate = require("../middleware/authentication");
 
 const register = async (req, res) => {
   const {

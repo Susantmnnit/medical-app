@@ -1,13 +1,8 @@
-const express = require("express");
-const router = express.Router();
 const bcrypt = require("bcryptjs");
-// const jwt=require("bcryptjs");
 
 require("../database/db");
 const User = require("../model/userschema");
 const Doctor = require("../model/doctorschema");
-const Appointment = require("../model/bookingschema");
-const Authenticate = require("../middleware/authentication");
 const { Feedback } = require("../model/feedbackscema");
 const jwt = require("jsonwebtoken");
 
@@ -37,12 +32,12 @@ const doctorSignup = async (req, res) => {
     !password ||
     !cpassword
   ) {
-    console.log(name);
-    console.log(email);
-    console.log(phone);
-    console.log(specalist);
-    console.log(password);
-    console.log(cpassword);
+    // console.log(name);
+    // console.log(email);
+    // console.log(phone);
+    // console.log(specalist);
+    // console.log(password);
+    // console.log(cpassword);
     return res.json({ error: "plz filled the filed properly" });
   }
   try {
@@ -69,7 +64,8 @@ const doctorSignup = async (req, res) => {
       res.status(201).json({ message: "registered successfully" });
     }
   } catch (err) {
-    console.log(err);
+    // console.log(err);
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 
@@ -88,7 +84,7 @@ const doctorLogin = async (req, res) => {
       const token = jwt.sign({ _id: doctor._id }, process.env.SECRET_KEY, {
         expiresIn: "7d",
       });
-      console.log(token);
+      // console.log(token);
 
       if (!isMatch) {
         res.status(400).json({ error: "Invalid Credential" });
@@ -117,13 +113,13 @@ const doctorLogin = async (req, res) => {
       res.status(400).json({ error: "Invalid Credential" });
     }
   } catch (err) {
-    console.log(err);
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 
 const fetchDoctors = async (req, res) => {
   const { city, problem } = req.query;
-  console.log("Fetching doctors for city:", city, "and problem:", problem);
+  // console.log("Fetching doctors for city:", city, "and problem:", problem);
   try {
     let query = {};
     if (city != "none" && city != null) {
@@ -137,7 +133,7 @@ const fetchDoctors = async (req, res) => {
     );
     res.json(doctors);
   } catch (error) {
-    console.error("Error fetching doctors:", error);
+    // console.error("Error fetching doctors:", error);
     res.status(500).json({ error: "Failed to fetch doctors" });
   }
 };
@@ -151,7 +147,7 @@ const getDoctorWithId = async (req, res) => {
     // console.log("doctor", doctor);
     res.json(doctor);
   } catch (err) {
-    console.log(err);
+    // console.log(err);
     res.status(500).json({ error: "Failed to fetch doctor" });
   }
 };
@@ -176,7 +172,7 @@ const addSlot = async (req, res) => {
 
     res.status(201).json({ message: "Slot added successfully", slot: newSlot });
   } catch (error) {
-    console.error(error);
+    // console.error(error);
     res.status(500).json({ error: "Server error" });
   }
 };
@@ -200,8 +196,8 @@ const deleteSlot = async (req, res) => {
 
     res.status(200).json({ message: "Slot deleted successfully" });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Server error" });
+    // console.error(error);
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 
@@ -238,15 +234,15 @@ const doctorsPatient = async (req, res) => {
 
     res.status(200).json(bookedSlots);
   } catch (error) {
-    console.error(`Error fetching patients: ${error}`);
-    res.status(500).json({ error: "Server error" });
+    // console.error(`Error fetching patients: ${error}`);
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 
 const doctorsFeedback = async (req, res) => {
   const { doctorId } = req.params;
   const { patientId, comment } = req.body;
-  console.log(req.body, doctorId);
+
   if (!patientId || !comment || !doctorId) {
     return res
       .status(400)
@@ -265,7 +261,6 @@ const doctorsFeedback = async (req, res) => {
       return res.status(404).json({ error: "Patient not found" });
     }
 
-    console.log("hgghh", doctor, patient);
     const feedback = new Feedback({
       doctor: doctor._id,
       patient: patient._id,
@@ -275,7 +270,6 @@ const doctorsFeedback = async (req, res) => {
 
     res.status(201).json({ message: "Feedback added successfully", feedback });
   } catch (error) {
-    console.error(`Error adding feedback: ${error}`);
     res.status(500).json({ error: "Server error" });
   }
 };
@@ -294,7 +288,6 @@ const doctorsFeedbacks = async (req, res) => {
     );
     res.status(200).json(feedbacks);
   } catch (error) {
-    console.error(`Error fetching feedbacks: ${error}`);
     res.status(500).json({ error: "Server error" });
   }
 };
@@ -328,8 +321,8 @@ const updateDoctor = async (req, res) => {
     // console.log("updatedDoctor", updatedDoctor);
     res.status(200).json(updatedDoctor);
   } catch (error) {
-    console.error("Error updating user:", error);
-    res.status(500).json({ message: "Server error" });
+    // console.error("Error updating user:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 

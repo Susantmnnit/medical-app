@@ -1,19 +1,10 @@
 const express = require("express");
 const router = express.Router();
-const bcrypt = require("bcryptjs");
-// const jwt=require("bcryptjs");
 
 require("../database/db");
-const User = require("../model/userschema");
 const Doctor = require("../model/doctorschema");
-const Appointment = require("../model/bookingschema");
-const Authenticate = require("../middleware/authentication");
-const generateToken = require("../middleware/token");
-const { default: mongoose } = require("mongoose");
+
 const { Feedback } = require("../model/feedbackscema");
-const { generateZoomMeeting } = require("../service/zoom");
-const { v4: uuidv4 } = require("uuid");
-const Conference = require("../model/conference");
 const { register, login, update } = require("../controllers/userController");
 const {
   doctorSignup,
@@ -97,9 +88,13 @@ router.put("/patient", auth, update);
 
 router.put("/doctor", auth, updateDoctor);
 
-router.get("/logout", (req, res) => {
-  console.log("logout page");
-  res.clearCookie("jwtoken", { path: "/" });
-  res.status(200).send("User Logout");
+router.post("/logout", (req, res) => {
+  res.send({
+    status: 200,
+    data: {
+      message: "successful",
+      token: undefined,
+    },
+  });
 });
 module.exports = router;

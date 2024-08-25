@@ -1,15 +1,13 @@
 import React from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import Navheader from "./comp/Navheader";
 import Login from "./comp/Login";
 import Doctors from "./comp/Doctors";
-import Home from "./comp/Home";
 import Userprofile from "./comp/Userprofile";
 import DoctorsProfile from "./comp/DoctorsProfile";
 import "./App.css";
 import Doctorlogin from "./comp/Doctorlogin";
 import Patients from "./comp/Patients";
-import Zoom from "./comp/Zoom";
 import JoinConference from "./comp/Joinconference";
 import HelpCenter from "./comp/Help";
 import { useSelector } from "react-redux";

@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { AppBar, Box, Toolbar, Typography, Button, Menu, MenuItem } from '@mui/material';
-import { motion } from "framer-motion";
 import MedicationLiquidOutlinedIcon from '@mui/icons-material/MedicationLiquidOutlined';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { logoutStudent } from '../redux/Patientslice';
 import { logoutDoctor } from '../redux/Doctorslice';
+import axios from 'axios';
 
 export default function Navheader() {
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -76,13 +76,19 @@ export default function Navheader() {
     navigate('/apoint')
   }
 
-  const logout = () => {
-    localStorage.removeItem('token');
-    dispatch(logoutStudent());
-    dispatch(logoutDoctor());
-    navigate("/");
-    handleClose();
-    // window.location.reload();
+  const logout = async () => {
+    try {
+      const logout = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/logout`);
+      localStorage.removeItem('token');
+      dispatch(logoutStudent());
+      dispatch(logoutDoctor());
+      navigate("/");
+      handleClose();
+      alert('Logout Successfull');
+    }
+    catch (error) {
+      alert('Logout failed:', error);
+    }
   };
 
   return (

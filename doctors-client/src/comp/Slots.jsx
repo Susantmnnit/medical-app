@@ -11,8 +11,6 @@ export default function Slots({ slots, doctorId }) {
     (state) => state.doctors.token !== null
     );
     const token = localStorage.getItem("token");
-    const user = useSelector((state) => state.patients);
-    const doctor = useSelector((state) => state.doctors);
     // const token = user.token;
     // console.log("toekn-", token);
     
@@ -31,13 +29,13 @@ export default function Slots({ slots, doctorId }) {
             alert("slot booked successfully");
         } catch (error) {
             if (error.response) {
-                console.error('Error response:', error.response.data);
+                // console.error('Error response:', error.response.data);
                 alert(`Error booking slot: ${error.response.data.error}`);
             } else if (error.request) {
-                console.error('Error request:', error.request);
+                // console.error('Error request:', error.request);
                 alert("Error booking slot: No response from server");
             } else {
-                console.error('Error message:', error.message);
+                // console.error('Error message:', error.message);
                 alert(`Error booking slot: ${error.message}`);
             }
         }
@@ -55,7 +53,7 @@ export default function Slots({ slots, doctorId }) {
         // console.log('Slot deleted successfully:', response.data);
         alert("slot deleted successfully");
         } catch (error) {
-        console.error('Error booking slot:', error);
+        alert('Error booking slot:', error);
         }
     };
 

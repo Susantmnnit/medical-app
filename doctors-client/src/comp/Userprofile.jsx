@@ -1,11 +1,8 @@
 import { Box, Container, Typography, Grid, Button, Dialog, DialogTitle, DialogContent, DialogActions, TextField } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import image from '../images/brotherimg.png';
-import { useParams } from 'react-router-dom';
 import axios from 'axios'
-import Feedbacks from './Feedbacks';
 import Apointments from './Apointments';
-import BookedSlots from './bookedSlots';
 import { useDispatch, useSelector } from 'react-redux';
 import { redirect_to_dashboard } from '../redux/Patientslice';
 

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, Icon, Typography, Grid, Button } from '@mui/material';
 import MailOutlinedIcon from '@mui/icons-material/MailOutlined';
 import PermPhoneMsgOutlinedIcon from '@mui/icons-material/PermPhoneMsgOutlined';
@@ -31,7 +31,7 @@ function Allapointments() {
         // console.log("slots", response.data);
         setSlots(response.data);
       } catch (error) {
-        console.error("Error fetching booked slots:", error);
+        alert("Error fetching booked slots:", error);
       }
     };
 

@@ -29,7 +29,7 @@ function Patients() {
         setSlots(response.data);
         // console.log("doctor--",response.data);
       } catch (error) {
-        console.error('Error fetching slots:', error);
+        alert('Error fetching slots:', error);
       }
     };
 

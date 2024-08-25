@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Box, Container, Typography, Grid, Paper, Button } from "@mui/material";
+import { Box, Typography, Grid, Paper, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
 const BookedSlots = ({ userId }) => {
@@ -8,16 +8,15 @@ const BookedSlots = ({ userId }) => {
   const navigate = useNavigate();
   
   useEffect(() => {
-    console.log("slots", userId);
+    // console.log("slots", userId);
     const fetchSlots = async () => {
       try {
         const response = await axios.get(
           `${process.env.REACT_APP_BACKEND_URL}/patients/${userId}/bookedSlots`
         );
-        console.log("slots---", response.data);
         setSlots(response.data);
       } catch (error) {
-        console.error("Error fetching booked slots:", error);
+        alert("Error fetching booked slots:", error);
       }
     };
 

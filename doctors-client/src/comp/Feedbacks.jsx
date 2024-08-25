@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
 import { Box, Button, Icon, Typography, Input, Divider } from '@mui/material';
 import KeyboardDoubleArrowRightOutlinedIcon from '@mui/icons-material/KeyboardDoubleArrowRightOutlined';
 import { useSelector } from 'react-redux';
@@ -19,7 +18,7 @@ export default function Feedbacks({doctorId}) {
     // console.log(doctorId);
     const fetchFeedbacks = async () => {
       if (!doctorId) {
-        console.error('Doctor ID is missing in the URL.');
+        // console.error('Doctor ID is missing in the URL.');
         return;
       }
       
@@ -28,7 +27,7 @@ export default function Feedbacks({doctorId}) {
         setFeedbacks(response.data);
         // console.log("feedbacks--",feedbacks);
       } catch (error) {
-        console.error('Error fetching feedbacks:', error);
+        alert('Error fetching feedbacks:', error);
       }
     };
 
@@ -52,7 +51,7 @@ export default function Feedbacks({doctorId}) {
       setFeedbacks([...feedbacks, response.data.feedback]);
       setNewFeedback('');
     } catch (error) {
-      console.error('Error adding feedback:', error);
+      alert('Error adding feedback:', error);
     }
   };
 

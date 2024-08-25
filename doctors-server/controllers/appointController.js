@@ -1,19 +1,9 @@
-const express = require("express");
-const router = express.Router();
-const bcrypt = require("bcryptjs");
-// const jwt=require("bcryptjs");
-
-require("../database/db");
-const User = require("../model/userschema");
 const Doctor = require("../model/doctorschema");
-const Appointment = require("../model/bookingschema");
-const Authenticate = require("../middleware/authentication");
-const generateToken = require("../middleware/token");
 const { default: mongoose } = require("mongoose");
-const { Feedback } = require("../model/feedbackscema");
-const { generateZoomMeeting } = require("../service/zoom");
 const { v4: uuidv4 } = require("uuid");
 const Conference = require("../model/conference");
+
+require("../database/db");
 
 const booking = async (req, res) => {
   const { user, doctor, appointmentDate, durationInMinutes, status } = req.body;
@@ -151,10 +141,10 @@ const bookedSlots = async (req, res) => {
       },
       {
         $unwind: { path: "$conferenceInfo", preserveNullAndEmptyArrays: true },
-      }, // Preserve slots without conference
+      },
       {
         $lookup: {
-          from: "doctors", // Assuming your doctor collection is named "doctors"
+          from: "doctors",
           localField: "_id",
           foreignField: "_id",
           as: "doctorInfo",
@@ -169,10 +159,10 @@ const bookedSlots = async (req, res) => {
           endTime: "$slots.endTime",
           isBooked: "$slots.isBooked",
           patientInfo: "$patientInfo",
-          conferenceId: "$slots.conferenceId", // Include conferenceId
-          conferenceTitle: "$conferenceInfo.title", // Optionally include conference title if needed
+          conferenceId: "$slots.conferenceId",
+          conferenceTitle: "$conferenceInfo.title",
           conference_slot_id: "$conferenceInfo.slotId",
-          doctorInfo: "$doctorInfo", // Include doctor info
+          doctorInfo: "$doctorInfo",
         },
       },
     ]);

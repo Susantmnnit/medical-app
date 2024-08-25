@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Box, Container, Typography, Grid, Paper, Button } from "@mui/material";
+import { Box, Typography, Grid, Paper, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
 export default function Apointments({ userId }) {
@@ -20,10 +20,10 @@ export default function Apointments({ userId }) {
         const response = await axios.get(
           `${process.env.REACT_APP_BACKEND_URL}/patients/bookedSlots`,config
         );
-        console.log("slots", response.data);
+        
         setSlots(response.data);
       } catch (error) {
-        console.error("Error fetching booked slots:", error);
+        alert("Error fetching booked slots:", error);
       }
     };
 
